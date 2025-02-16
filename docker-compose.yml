@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  backend:
+    image: back
+    container_name: back
+    build:
+      context: ./
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      # Specifying the env file with necessaries values
+      - .docker_config.env
+
+  frontend:
+    image: front
+    container_name: front
+    build:
+      context: ./frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+  
+  selenium:
+    image: selenium
+    container_name: selenium
+    build:
+      context: ./
+      dockerfile: ./selenium/Dockerfile
+    ports:
+      - "8090:8090"
