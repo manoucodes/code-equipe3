@@ -20,8 +20,13 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ca.etsmtl.taf.performance.gatling.Repository.GatlingTestsRepository;
+import ca.etsmtl.taf.performance.gatling.entity.GatlingTestDocument;
+import ca.etsmtl.taf.performance.gatling.entity.TestRequestDTO;
+import ca.etsmtl.taf.performance.gatling.entity.TestResultDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +50,9 @@ import ca.etsmtl.taf.performance.gatling.config.GatlingConfigurator;
 @RestController
 @RequestMapping("/api/performance/gatling")
 public class GatlingApiController {
+
+    @Autowired
+    private GatlingTestsRepository gatlingRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(GatlingApiController.class);
 
@@ -90,6 +98,40 @@ public class GatlingApiController {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
+            }
+
+            /*
+            Save test request and test results to MongoDB
+            Should be in a service layer, but for now keeping with the architecture
+
+            Could also save async since no immediate interaction with the user
+
+            Test result dto format tbd
+             */
+            TestRequestDTO testRequestDTO = TestRequestDTO.builder()
+                    .baseUrl(gatlingRequest.getBaseUrl())
+                    .scenarioName(gatlingRequest.getScenarioName())
+                    .requestName(gatlingRequest.getRequestName())
+                    .uri(gatlingRequest.getUri())
+                    .requestBody(gatlingRequest.getRequestBody())
+                    .methodType(gatlingRequest.getMethodType())
+                    .usersNumber(gatlingRequest.getUsersNumber())
+                    .build();
+
+
+            TestResultDTO testResultDTO = TestResultDTO.builder()
+                    .htmlContent(output.toString())
+                    .build();
+
+            GatlingTestDocument results = GatlingTestDocument.builder()
+                    .testRequest(testRequestDTO)
+                    .testResult(testResultDTO)
+                    .build();
+
+            try {
+                gatlingRepository.save(results);
+            } catch (Exception e) {
+                logger.error("Mongo error: ", e);
             }
 
             reader.close();
