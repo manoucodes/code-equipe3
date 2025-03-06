@@ -1,4 +1,7 @@
 package ca.etsmtl.taf.performance.jmeter;
+import ca.etsmtl.taf.performance.jmeter.model.*;
+import ca.etsmtl.taf.performance.jmeter.repository.JMeterTestsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,25 +9,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.etsmtl.taf.performance.jmeter.model.FTPTestPlan;
-import ca.etsmtl.taf.performance.jmeter.model.HttpTestPlan;
-import ca.etsmtl.taf.performance.jmeter.model.JMeterResponse;
-import ca.etsmtl.taf.performance.jmeter.model.TestPlanBase;
 import ca.etsmtl.taf.performance.jmeter.utils.JMeterRunner;
+
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/performance/jmeter")
 public class JMeterController {
 
+  @Autowired private JMeterTestsRepository jMeterTestsRespository;
+
   private ResponseEntity<JMeterResponse> executeTestPlan(TestPlanBase testPlan) {
 
     JMeterResponse jMeterResponse = new JMeterResponse("", "", null, null);
 
+    /*
+    Save test request and test results to MongoDB
+    Should be in a service layer, but for now keeping with the architecture
+
+    Could also save async since no immediate interaction with the user
+
+    Test result dto format tbd
+     */
+    JMeterTestDocument testDocument = JMeterTestDocument.builder()
+            .testRequest(testPlan)
+            .build();
+    try {
+      jMeterTestsRespository.save(testDocument);
+    } catch (Exception e) {
+      System.err.println("Mongo error: " + e.getMessage());
+    }
+
+
+
     try {
       jMeterResponse = JMeterRunner.executeTestPlanAndGenerateReport(testPlan);
       jMeterResponse.setStatus("success");
-      jMeterResponse.setMessage("Test plan executed successfully");
+      jMeterResponse.setMessage("Test plan executed successfully"); 
       return ResponseEntity.ok().body(jMeterResponse);
     } catch (JMeterRunnerException e) {
       jMeterResponse.setStatus("failure");
