@@ -1,10 +1,14 @@
 package ca.etsmtl.taf.performance.jmeter.model;
 
+import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+@Data
 public abstract class TestPlanBase {
     protected String nbThreads;
     protected String rampTime;
