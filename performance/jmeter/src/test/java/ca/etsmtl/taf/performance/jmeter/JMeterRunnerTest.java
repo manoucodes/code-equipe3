@@ -1,8 +1,5 @@
 package ca.etsmtl.taf.performance.jmeter;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +8,8 @@ import ca.etsmtl.taf.performance.jmeter.model.HttpTestPlan;
 import ca.etsmtl.taf.performance.jmeter.model.JMeterResponse;
 import ca.etsmtl.taf.performance.jmeter.model.TestPlanBase;
 import ca.etsmtl.taf.performance.jmeter.utils.JMeterRunner;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JMeterRunnerTest {
     @BeforeAll
@@ -47,11 +46,11 @@ public class JMeterRunnerTest {
                 .build();
 
         try {
-            JMeterResponse response = JMeterRunner.executeTestPlanAndGenerateReport((TestPlanBase) testPlan);
+            JMeterResponse response = JMeterRunner.executeTestPlanAndGenerateReport(testPlan);
 
-            assertTrue(response.getDetails().getContentType().equalsIgnoreCase("html"), "Content type should be 'html'"); 
-            assertTrue(response.getSummary() != null, "Summary should not be empty");           
-            assertTrue(!response.getDetails().getLocationURL().isEmpty(), "Location URL should not be empty");
+            assertTrue(response.getDetails().getContentType().equalsIgnoreCase("html"), "Content type should be 'html'");
+            assertNotNull(response.getSummary(), "Summary should not be empty");
+            assertFalse(response.getDetails().getLocationURL().isEmpty(), "Location URL should not be empty");
 
         } catch (JMeterRunnerException e) {
             fail();

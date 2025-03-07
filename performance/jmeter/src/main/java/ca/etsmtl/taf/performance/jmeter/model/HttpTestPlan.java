@@ -2,7 +2,6 @@ package ca.etsmtl.taf.performance.jmeter.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 

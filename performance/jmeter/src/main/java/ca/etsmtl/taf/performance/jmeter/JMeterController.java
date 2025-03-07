@@ -17,7 +17,7 @@ import ca.etsmtl.taf.performance.jmeter.utils.JMeterRunner;
 @RequestMapping("/api/performance/jmeter")
 public class JMeterController {
 
-  @Autowired private JMeterTestsRepository jMeterTestsRespository;
+  @Autowired private JMeterTestsRepository jMeterTestsRepository;
 
   private ResponseEntity<JMeterResponse> executeTestPlan(TestPlanBase testPlan) {
 
@@ -35,7 +35,7 @@ public class JMeterController {
             .testRequest(testPlan)
             .build();
     try {
-      jMeterTestsRespository.save(testDocument);
+      jMeterTestsRepository.save(testDocument);
     } catch (Exception e) {
       System.err.println("Mongo error: " + e.getMessage());
     }

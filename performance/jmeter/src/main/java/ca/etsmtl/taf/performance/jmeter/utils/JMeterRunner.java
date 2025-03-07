@@ -81,7 +81,7 @@ public class JMeterRunner {
         logger.info("Loading statistics file generated at {}", statisticsFile.getAbsolutePath());
       }
       ObjectMapper mapper = new ObjectMapper();
-      Map<String, Object> jsonData = mapper.readValue(statisticsFile, new TypeReference<Map<String, Object>>() {
+      Map<String, Object> jsonData = mapper.readValue(statisticsFile, new TypeReference<>() {
       });
       jMeterResponse.setSummary(jsonData);
 
@@ -95,14 +95,14 @@ public class JMeterRunner {
     }
   }
 
-  private static final File getTestPlan() {
+  private static File getTestPlan() {
     File jmxFilePath = new File(JMeterConfigurator.getJmeterTemplatesFolder(), "TestPlan.jmx");
     logger.info("Using Test Plan {}", jmxFilePath);
 
     return jmxFilePath;
   }
 
-  private static final File getResultsFile() {
+  private static File getResultsFile() {
 
     String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     File resultsFile = new File(JMeterConfigurator.getJmeterResultsFolder(), timestamp + ".csv");
@@ -144,7 +144,7 @@ public class JMeterRunner {
 
       Summariser summeriser = null;
       String summariserName = JMeterUtils.getPropDefault("summariser.name", "");
-      if (summariserName.length() > 0) {
+      if (!summariserName.isEmpty()) {
         logger.info("Creating summariser <{}>", summariserName);
         summeriser = new Summariser(summariserName);
       }
@@ -188,7 +188,7 @@ public class JMeterRunner {
 
   private static class TestListener implements TestStateListener {
 
-    private CountDownLatch latch;
+    private final CountDownLatch latch;
 
     public TestListener(CountDownLatch latch) {
       this.latch = latch;
