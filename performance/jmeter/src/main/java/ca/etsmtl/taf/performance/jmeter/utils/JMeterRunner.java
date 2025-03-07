@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import ca.etsmtl.taf.performance.jmeter.model.JMeterResponseDetails;
 import org.apache.jmeter.engine.JMeterEngine;
 import org.apache.jmeter.engine.JMeterEngineException;
 import org.apache.jmeter.engine.StandardJMeterEngine;
@@ -50,7 +51,7 @@ public class JMeterRunner {
   public static JMeterResponse executeTestPlanAndGenerateReport(TestPlanBase testPlan) throws JMeterRunnerException {
 
     JMeterResponse jMeterResponse = new JMeterResponse("", "", null, null);
-    JMeterResponse.JMeterResponseDetails jMeterResponseDetails = jMeterResponse.new JMeterResponseDetails(null, null);
+    JMeterResponseDetails jMeterResponseDetails = new JMeterResponseDetails(null, null);
     jMeterResponse.setDetails(jMeterResponseDetails);
     try {
       File resultsFile = getResultsFile();
@@ -71,8 +72,7 @@ public class JMeterRunner {
   }
 
   @SuppressWarnings("java:S2139")
-  private static void populateResponse(JMeterResponse jMeterResponse,
-      JMeterResponse.JMeterResponseDetails jMeterResponseDetails, String dashboardLocation)
+  private static void populateResponse(JMeterResponse jMeterResponse, JMeterResponseDetails jMeterResponseDetails, String dashboardLocation)
       throws JMeterRunnerException {
     try {
       // Load statistics.json from the dashboardDir folder and deserialize

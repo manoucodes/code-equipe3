@@ -33,17 +33,18 @@ public class JMeterRunnerTest {
         // "method": "GET",
         // "loop": "2"
 
-        HttpTestPlan testPlan = new HttpTestPlan();
-        testPlan.setNbThreads("3");
-        testPlan.setRampTime("5");
-        testPlan.setProtocol("https");
-        testPlan.setDomain("httpbin.org");
-        testPlan.setMethod("GET");
-        testPlan.setPath("/get");
-        testPlan.setLoop("2");
-        testPlan.setDuration("");
-        testPlan.setPort("");
-        testPlan.setData("");
+        HttpTestPlan testPlan = HttpTestPlan.builder()
+                .nbThreads("3")
+                .rampTime("5")
+                .protocol("https")
+                .domain("httpbin.org")
+                .method("GET")
+                .path("/get")
+                .loop("2")
+                .duration("")
+                .port("")
+                .data("")
+                .build();
 
         try {
             JMeterResponse response = JMeterRunner.executeTestPlanAndGenerateReport((TestPlanBase) testPlan);

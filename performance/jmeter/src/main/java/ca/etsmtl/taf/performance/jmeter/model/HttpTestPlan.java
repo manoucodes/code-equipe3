@@ -11,109 +11,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import ca.etsmtl.taf.performance.jmeter.config.JMeterConfigurator;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@ToString(callSuper = true)
 public class HttpTestPlan extends TestPlanBase {
 
   private String protocol;
   private String path;
   private String data;
 
-  @Override
-  public String getLoop() {
-    return loop;
-  }
-
-  @Override
-  public void setLoop(String loop) {
-    this.loop = loop;
-  }
-
-  public String getData() {
-    return data;
-  }
-
-  public void setData(String data) {
-    this.data = data;
-  }
-
-  public HttpTestPlan() {
-    super();
-
-  }
-
-  public String getNbThreads() {
-    return nbThreads;
-  }
-
-  @Override
-  public void setNbThreads(String nbThreads) {
-    this.nbThreads = nbThreads;
-  }
-
-  @Override
-  public String getRampTime() {
-    return rampTime;
-  }
-
-  @Override
-  public void setRampTime(String rampTime) {
-    this.rampTime = rampTime;
-  }
-
-  @Override
-  public String getDuration() {
-    return duration;
-  }
-
-  @Override
-  public void setDuration(String duration) {
-    this.duration = duration;
-  }
-
-  @Override
-  public String getDomain() {
-    return domain;
-  }
-
-  @Override
-  public void setDomain(String domain) {
-    this.domain = domain;
-  }
-
-  @Override
-  public String getPort() {
-    return port;
-  }
-
-  @Override
-  public void setPort(String port) {
-    this.port = port;
-  }
-
-  public String getProtocol() {
-    return protocol;
-  }
-
-  public void setProtocol(String protocol) {
-    this.protocol = protocol;
-  }
-
-  public String getPath() {
-    return path;
-  }
-
-  public void setPath(String path) {
-    this.path = path;
-  }
-
-  public String getMethod() {
-    return method;
-  }
-
-  @Override
-  public void setMethod(String method) {
-    this.method = method;
-  }
 
   public void generateTestPlan() {
     replaceAndSaveVariables();
@@ -128,14 +39,14 @@ public class HttpTestPlan extends TestPlanBase {
     try {
       // Read the XML content from the file
       String filePath = JMeterConfigurator.getHTTPSamplerTemplate();
-      String xmlContent = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
+      String xmlContent = Files.readString(Paths.get(filePath));
       String target = new File(JMeterConfigurator.getJmeterTemplatesFolder(), "TestPlan.jmx").getAbsolutePath();
 
       // Replace variables with Java variables (using default values if not found)
       xmlContent = replaceVariables(xmlContent);
 
       // Save the modified content back to the file
-      Files.write(Paths.get(target), xmlContent.getBytes(StandardCharsets.UTF_8));
+      Files.writeString(Paths.get(target), xmlContent);
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -174,20 +85,6 @@ public class HttpTestPlan extends TestPlanBase {
 
     }
     return xmlContent;
-  }
-
-  @Override
-  public String toString() {
-    return "JmeterTestPlan{" +
-        "nbThreads='" + nbThreads + '\'' +
-        ", rampTime='" + rampTime + '\'' +
-        ", duration='" + duration + '\'' +
-        ", domain='" + domain + '\'' +
-        ", port='" + port + '\'' +
-        ", protocol='" + protocol + '\'' +
-        ", path='" + path + '\'' +
-        ", method='" + method + '\'' +
-        '}';
   }
 
 }
