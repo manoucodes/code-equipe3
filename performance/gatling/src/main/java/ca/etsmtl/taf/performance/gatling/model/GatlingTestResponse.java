@@ -1,4 +1,4 @@
-package ca.etsmtl.taf.performance.gatling.entity;
+package ca.etsmtl.taf.performance.gatling.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,9 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class TestResultDTO {
-    private String htmlContent;
+public class GatlingTestResponse {
+
+    private String response;
 }

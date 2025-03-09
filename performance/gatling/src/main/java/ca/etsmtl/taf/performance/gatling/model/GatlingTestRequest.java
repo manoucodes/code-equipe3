@@ -1,5 +1,6 @@
-package ca.etsmtl.taf.performance.gatling.entity;
+package ca.etsmtl.taf.performance.gatling.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,13 +10,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TestRequestDTO {
-
+public class GatlingTestRequest {
+    @JsonAlias("testBaseUrl")
     private String baseUrl;
+    @JsonAlias("testScenarioName")
     private String scenarioName;
+    @JsonAlias("testRequestName")
     private String requestName;
+    @JsonAlias("testUri")
     private String uri;
+    @JsonAlias("testRequestBody")
     private String requestBody;
+    @JsonAlias("testMethodType")
     private String methodType;
+    @JsonAlias("testUsersNumber")
     private int usersNumber;
+    
 }

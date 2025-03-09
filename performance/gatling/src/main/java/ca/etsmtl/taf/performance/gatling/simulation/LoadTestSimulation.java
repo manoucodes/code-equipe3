@@ -9,7 +9,7 @@ import static io.gatling.javaapi.http.HttpDsl.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ca.etsmtl.taf.performance.gatling.entity.GatlingTestRequest;
+import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequest;
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;

@@ -1,4 +1,4 @@
-package ca.etsmtl.taf.performance.gatling.entity;
+package ca.etsmtl.taf.performance.gatling.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +18,7 @@ public class GatlingTestDocument {
     @Id
     private ObjectId id;
 
-    private TestRequestDTO testRequest;
-    private TestResultDTO testResult;
+    private GatlingTestRequest testRequest;
+    private GatlingTestResponse testResult;
 
 }
