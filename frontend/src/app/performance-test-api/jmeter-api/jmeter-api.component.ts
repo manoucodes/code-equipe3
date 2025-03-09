@@ -30,6 +30,8 @@ export class JmeterApiComponent implements OnInit {
 
   http_request: JMeterHttpRequest = new JMeterHttpRequest();
   ftp_request: JMeterFTPRequest = new JMeterFTPRequest();
+  http_uri: string = '';
+
   http_description = document.getElementById('http-description');
   ftp_description = document.getElementById('ftp-description');
 
@@ -140,6 +142,23 @@ export class JmeterApiComponent implements OnInit {
     this.resetForms();
     this.updateButtonVisibility();
   }
+
+  parseUri() {
+    if (this.http_uri) {
+      try {
+        const url = new URL(this.http_uri);
+
+        this.http_request.domain = url.hostname;
+        this.http_request.port = url.port || '';
+        this.http_request.protocol = url.protocol.replace(':', '');
+        this.http_request.path = url.pathname;
+
+      } catch (error) {
+        console.error('Invalid URI:', error);
+      }
+    }
+  }
+
   validateHttpForm(): boolean {
     let isValid = true;
     const requiredFields = [
