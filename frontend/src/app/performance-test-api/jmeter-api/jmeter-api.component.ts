@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JMeterHttpRequest } from './jmeter-http-request';
 import { JMeterFTPRequest } from './jmeter-ftp-request';
+import { JMETER_SCENARIOS } from '../../models/jmeter_scenarios';
+
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { PerformanceTestApiService } from 'src/app/_services/performance-test-api.service';
@@ -31,6 +33,9 @@ export class JmeterApiComponent implements OnInit {
   http_request: JMeterHttpRequest = new JMeterHttpRequest();
   ftp_request: JMeterFTPRequest = new JMeterFTPRequest();
   http_uri: string = '';
+
+  selectedScenario: string | null = null;
+  scenarioConfigurations = JMETER_SCENARIOS;
 
   http_description = document.getElementById('http-description');
   ftp_description = document.getElementById('ftp-description');
@@ -141,6 +146,34 @@ export class JmeterApiComponent implements OnInit {
 
     this.resetForms();
     this.updateButtonVisibility();
+  }
+
+  onScenarioSelect() {
+
+    const scenario = this.scenarioConfigurations.find(scenario => scenario.name === this.selectedScenario);
+    if (!scenario) return;
+
+    if (scenario.type === 'http') {
+      this.applyScenario(this.http_request, scenario.config);
+    } else if (scenario.type === 'ftp') {
+      this.applyScenario(this.ftp_request, scenario.config);
+    }
+
+  }
+
+  applyScenario<T>(target: T, source: Partial<T>): T {
+    Object.keys(source).forEach(key => {
+      const configKey = key as keyof T;
+      const sourceValue = source[configKey];
+
+      if (typeof sourceValue === 'string' && sourceValue !== '') {
+        target[configKey] = sourceValue as T[keyof T];
+      }
+      else if (sourceValue !== null && sourceValue !== undefined) {
+        target[configKey] = sourceValue as T[keyof T];
+      }
+    });
+    return target;
   }
 
   parseUri() {
