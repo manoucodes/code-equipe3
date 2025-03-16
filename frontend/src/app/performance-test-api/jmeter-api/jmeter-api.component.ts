@@ -18,6 +18,7 @@ import { environment } from 'src/environments/environment';
   ],
 })
 export class JmeterApiComponent implements OnInit {
+
   isHttpSidebarVisible: boolean = false;
   isFtpSidebarVisible: boolean = false;
   showHttpButton: boolean = true;
@@ -32,11 +33,19 @@ export class JmeterApiComponent implements OnInit {
 
   http_request: JMeterHttpRequest = new JMeterHttpRequest();
   ftp_request: JMeterFTPRequest = new JMeterFTPRequest();
+  requestTargets: { [type: string]: any } = {
+    'http': this.http_request,
+    'ftp': this.ftp_request,
+  };
+
+  formType: string = 'http';
+
   http_uri: string = '';
 
+  filteredScenarios: any[] = [];
   selectedScenario: string | null = null;
   scenarioConfigurations = JMETER_SCENARIOS;
-
+  
   http_description = document.getElementById('http-description');
   ftp_description = document.getElementById('ftp-description');
 
@@ -50,6 +59,7 @@ export class JmeterApiComponent implements OnInit {
   ) as HTMLInputElement;
 
   selectedTest: any = null;
+
 
   constructor(
     private fb: FormBuilder,
@@ -70,6 +80,7 @@ export class JmeterApiComponent implements OnInit {
     ) as HTMLInputElement;
 
     this.updateButtonVisibility();
+    this.updateScenariosFilter();
   }
 
   toggleHttpSidebar() {
@@ -144,21 +155,30 @@ export class JmeterApiComponent implements OnInit {
       switchLabel.innerText = 'HTTP';
     }
 
+    console.log('Switch checked:', this.switchCheckbox?.checked);
+    this.formType = this.switchCheckbox?.checked ? 'ftp' : 'http';
+
     this.resetForms();
     this.updateButtonVisibility();
+    this.updateScenariosFilter();
+  }
+
+  updateScenariosFilter() {
+    this.filteredScenarios = JMETER_SCENARIOS.filter(
+      scenario => scenario.type === this.formType
+    );
+    console.log('Filtering scenarios for:', this.formType);
+    console.log('Results:', this.filteredScenarios);
   }
 
   onScenarioSelect() {
-
-    const scenario = this.scenarioConfigurations.find(scenario => scenario.name === this.selectedScenario);
+    const scenario = this.scenarioConfigurations.find(
+      s => s.name === this.selectedScenario
+    );
     if (!scenario) return;
-
-    if (scenario.type === 'http') {
-      this.applyScenario(this.http_request, scenario.config);
-    } else if (scenario.type === 'ftp') {
-      this.applyScenario(this.ftp_request, scenario.config);
-    }
-
+  
+    const target = this.requestTargets[scenario.type];
+    this.applyScenario(target, scenario.config);
   }
 
   applyScenario<T>(target: T, source: Partial<T>): T {
