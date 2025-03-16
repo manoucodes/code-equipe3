@@ -161,6 +161,11 @@
     <div class="main" [ngClass]="{'sidebar-visible': isHttpSidebarVisible || isFtpSidebarVisible}">
       <div class="content">
         
+        <div class="form-title">
+          <img src="assets/logo/jmeter-logo.png" alt="JMeter Icon" class="jmeter-icon">
+          <span class="hover-text">Apache JMeter : Outil de test de performance</span>
+        </div>
+
         <div class="form-group scenario-selector">
           <label for="scenarioSelect"><strong>Preconfigured Scenarios</strong></label>
           <select class="form-control" id="scenarioSelect" [(ngModel)]="selectedScenario"
@@ -172,10 +177,6 @@
         </div>
 
         <form id="http-form" (ngSubmit)="onHttpSubmit()">
-          <div class="form-title">
-            <img src="assets/logo/jmeter-logo.png" alt="JMeter Icon" class="jmeter-icon">
-            <span class="hover-text">Apache JMeter : Outil de test de performance</span>
-          </div>
 
           <!-- Configuration de base -->
           <div class="section-title"
@@ -291,10 +292,6 @@
         </form>
 
         <form id="ftp-form" (ngSubmit)="onFtpSubmit()" style="display: none;">
-          <div class="form-title">
-            <img src="assets/logo/jmeter-logo.png" alt="JMeter Icon" class="jmeter-icon">
-            <span class="hover-text">Apache JMeter : Outil de test de performance</span>
-          </div>
           <!-- Configuration de base -->
           <div class="section-title">
             <h2> Configuration de base FTP</h2>
