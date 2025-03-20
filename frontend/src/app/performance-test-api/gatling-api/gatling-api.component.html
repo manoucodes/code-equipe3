@@ -1,14 +1,40 @@
 <div class="container">
   <div id="myModal" class="modal">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" [ngClass]="{ 'failure': testResult && !isSuccessfull() }">
         <span class="close" (click)="closeModal()">&times;</span>
         <h2>Résultat de test</h2>
       </div>
-      <div class="modal-body" >
-        <span *ngIf="testResult && testResult.length > 0" class="result-icon success">&#10004;</span>
-        <p *ngIf="testResult && testResult.length > 0">Le rapport a été généré avec succès.</p>
-        <button mat-raised-button class="showbutton" color="primary" (click)="showLatestReport()" >Afficher le rapport</button>
+      <div class="modal-body">
+        <!--Start: The test is successful -->
+        <span *ngIf="testResult && isSuccessfull()" class="result-icon success">&#10004;</span>
+        <p *ngIf="testResult && isSuccessfull()">Le test a été exécuté avec succès.</p>
+        <!--End: The test is successful -->
+
+        <!--Start: The test fails-->
+        <span *ngIf="testResult && !isSuccessfull()" class="result-icon test-result-failure">&#10060;</span>
+        <p *ngIf="testResult == null || !isSuccessfull()">Certains critères d’acceptation n’ont pas été validés.</p>
+        <!--End: test fails-->
+
+        <table *ngIf="testResult" class="assertions-table">
+          <thead>
+          <tr>
+            <th>Assertion</th>
+            <th>Valeur</th>
+            <th>Statut</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr [ngClass]="assertion.result ? 'assertion-success' : 'assertion-fail'" *ngFor="let assertion of testResult.assertions">
+            <td>{{ assertion.message }}</td>
+            <td>{{ assertion.actualValue}}</td>
+            <td>{{ assertion.result ? 'SUCCÈS' : 'ÉCHEC' }}</td>
+          </tr>
+          </tbody>
+        </table>
+
+        <button mat-raised-button class="showbutton" color="primary" (click)="showLatestReport()">Afficher le rapport
+        </button>
       </div>
       <div class="modal-footer">
         <button mat-raised-button class="newtestbutton" color="accent" (click)="newTest()">Nouveau Test</button>
@@ -22,7 +48,12 @@
       <form (ngSubmit)="onSubmit()">
         <div class="form-title">
           <!-- <h1>Configuration de test</h1> -->
-          <img src="assets/logo/Gatling-logo-RVB.png" alt="Gatling Logo" class="gatling-logo" matTooltip="Gatling est un outil de test de performance open-source qui évalue la réactivité des applications web et des API. Pour lancer un test avec Gatling, vous avez besoin de définir la configuration de l'application à tester.">
+          <img src="assets/logo/Gatling-logo-RVB.png" alt="Gatling Logo" class="gatling-logo"
+               matTooltip="Gatling est un outil de test de performance open-source qui évalue la réactivité des applications web et des API. Pour lancer un test avec Gatling, vous avez besoin de définir la configuration de l'application à tester.">
+        </div>
+
+        <div class="form-subtitle">
+          <h1>Requête de test</h1>
         </div>
 
         <div class="row">
@@ -31,38 +62,45 @@
             <span mat-icon-button matTooltip="Nom unique pour identifier le scénario de test.">
               <mat-icon>info</mat-icon>
             </span>
-            <input type="text" class="form-control" id="scenarioName" [(ngModel)]="request.testScenarioName" name="testScenarioName" placeholder="Exemple">
+            <input type="text" class="form-control" id="scenarioName" [(ngModel)]="request.testScenarioName"
+                   name="testScenarioName" placeholder="Exemple">
           </div>
           <div class="form-group col">
             <label for="requestName"><b>Nom de la requête</b></label>
             <span mat-icon-button matTooltip="Nom unique pour identifier la requête de test.">
               <mat-icon>info</mat-icon>
             </span>
-            <input type="text" class="form-control" id="requestName" [(ngModel)]="request.testRequestName" name="testRequestName" placeholder="Exemple">
+            <input type="text" class="form-control" id="requestName" [(ngModel)]="request.testRequestName"
+                   name="testRequestName" placeholder="Exemple">
           </div>
         </div>
 
         <div class="row">
           <div class="form-group col">
             <label for="baseUrl"><b>Url de base <span class="required-star">*</span></b></label>
-            <span mat-icon-button matTooltip="L'URL de base de l'application à tester, pour indiquer l'emplacement précis de l'application ou de l'API à tester.">
+            <span mat-icon-button
+                  matTooltip="L'URL de base de l'application à tester, pour indiquer l'emplacement précis de l'application ou de l'API à tester.">
               <mat-icon>info</mat-icon>
             </span>
-            <input type="text" class="form-control" id="baseUrl" [(ngModel)]="request.testBaseUrl" name="testBaseUrl" placeholder="https://exemple.api.domain">
+            <input type="text" class="form-control" id="baseUrl" [(ngModel)]="request.testBaseUrl" name="testBaseUrl"
+                   placeholder="https://exemple.api.domain">
           </div>
           <div class="form-group col">
             <label for="params"><b>Paramètres de requête <span class="required-star">*</span></b></label>
-            <span mat-icon-button matTooltip="Les paramètres que l'on inclut dans une URL pour transmettre des données.">
+            <span mat-icon-button
+                  matTooltip="Les paramètres que l'on inclut dans une URL pour transmettre des données.">
               <mat-icon>info</mat-icon>
             </span>
-            <input type="text" class="form-control" id="params" [(ngModel)]="request.testUri" name="testUri" placeholder="/params?param=exemple&page=1">
+            <input type="text" class="form-control" id="params" [(ngModel)]="request.testUri" name="testUri"
+                   placeholder="/params?param=exemple&page=1">
           </div>
         </div>
 
         <div class="row">
           <div class="form-group col">
             <label for="typeRequete"><b>Type de requête <span class="required-star">*</span></b></label>
-            <span mat-icon-button matTooltip="Le type de requête (GET, POST, etc.) que vous souhaitez tester,  définit le comportement de l'utilisateur virtuel dans le scénario de test.">
+            <span mat-icon-button
+                  matTooltip="Le type de requête (GET, POST, etc.) que vous souhaitez tester,  définit le comportement de l'utilisateur virtuel dans le scénario de test.">
               <mat-icon>info</mat-icon>
             </span>
             <select class="form-control" id="typeRequete" [(ngModel)]="request.testMethodType" name="testMethodType">
@@ -76,10 +114,12 @@
           </div>
           <div class="form-group col">
             <label for="nbrUsers"><b>Nombre d'utilisateurs <span class="required-star">*</span></b></label>
-            <span mat-icon-button matTooltip="Le nombre d'utilisateurs simultanés, pour simuler des charges réalistes et évaluer les performances de l'application sous différents niveaux de trafic.">
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs simultanés, pour simuler des charges réalistes et évaluer les performances de l'application sous différents niveaux de trafic.">
               <mat-icon>info</mat-icon>
             </span>
-            <input type="number" class="form-control" id="nbrUsers" [(ngModel)]="request.testUsersNumber" name="userNumber">
+            <input type="number" class="form-control" id="nbrUsers" [(ngModel)]="request.testUsersNumber"
+                   name="userNumber">
           </div>
         </div>
 
@@ -88,7 +128,33 @@
           <span mat-icon-button matTooltip="Le corps de la requête HTTP.">
             <mat-icon>info</mat-icon>
           </span>
-          <textarea class="form-control" id="requestBody" [(ngModel)]="request.testRequestBody" name="requestBody" rows="5"></textarea>
+          <textarea class="form-control" id="requestBody" [(ngModel)]="request.testRequestBody" name="requestBody"
+                    rows="5"></textarea>
+        </div>
+
+        <div class="form-subtitle" style="margin-top: 50px">
+          <h1>Critères d’acceptation</h1>
+        </div>
+
+        <div class="row">
+          <div class="form-group col">
+            <label for="meanResponseTime"><b>Temps de réponse moyen (ms) <span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le temps de réponse moyen (en ms) attendu. Pour valider ce critère, le temps de réponse moyen devra être inférieur à la valeure choisie.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="text" class="form-control" id="meanResponseTime" [(ngModel)]="request.assertionMeanResponseTime"
+                   name="assertionMeanResponseTime" placeholder="50">
+          </div>
+          <div class="form-group col">
+            <label for="failedRequestsPercent"><b>Pourcentage d'échecs (%) <span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le pourcentage d'échec maximum toléré. Pour valider ce critère, le pourcentage d'échec devra être inférieur à la valeure choisie.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="text" class="form-control" id="failedRequestsPercent" [(ngModel)]="request.assertionFailedRequestsPercent"
+                   name="assertionFailedRequestsPercent" placeholder="2">
+          </div>
         </div>
 
         <div class="row button-row">

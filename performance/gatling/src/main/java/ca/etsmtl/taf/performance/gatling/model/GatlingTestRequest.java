@@ -25,5 +25,9 @@ public class GatlingTestRequest {
     private String methodType;
     @JsonAlias("testUsersNumber")
     private int usersNumber;
-    
+    @JsonAlias("assertionMeanResponseTime")
+    private int meanResponseTime;
+    @JsonAlias("assertionFailedRequestsPercent")
+    private double failedRequestsPercent;
+
 }

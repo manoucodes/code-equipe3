@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { PerformanceTestApiService } from 'src/app/_services/performance-test-api.service';
 import Swal from 'sweetalert2';
 import { GatlingRequest } from './gatling-request';
+import {ApiResponse, GatlingAssertionResult, GatlingTestResult} from "../../models/gatlingTestResult";
 
 @Component({
   selector: 'app-gatling-api',
@@ -16,12 +17,13 @@ export class GatlingApiComponent implements OnInit {
   reportModal: HTMLElement | null = null;
   span: HTMLElement | null = null;
   testResult: any;
+  gatlingTestResult: GatlingTestResult | null = null
   testLog: string = "";
   latestReportContent: SafeHtml | null = null; // Contenu du dernier rapport de test
 
   busy: Subscription | undefined;
 
-  request: GatlingRequest = new GatlingRequest();
+  request: GatlingRequest = new GatlingRequest({});
 
   constructor(
     private readonly performanceTestApiService: PerformanceTestApiService,
@@ -89,6 +91,8 @@ export class GatlingApiComponent implements OnInit {
           success: !!successMessage
         }];
 
+        this.testResult = (response as ApiResponse).testResult
+
         // Ajouter un message indiquant que le rapport a été généré
         if (reportGeneratedMessage) {
           this.testResult.push({
@@ -141,7 +145,13 @@ export class GatlingApiComponent implements OnInit {
   }
 
   newTest() {
-    this.request = new GatlingRequest();
+    this.request = new GatlingRequest({});
     this.closeModal();
+  }
+
+  isSuccessfull() : boolean {
+    const failures = this.testResult.assertions.filter((assertion: GatlingAssertionResult) => assertion.result == false);
+    console.log("Failures" + failures)
+    return failures.length == 0;
   }
 }

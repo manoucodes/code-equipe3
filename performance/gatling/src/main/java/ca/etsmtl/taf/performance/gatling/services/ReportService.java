@@ -1,9 +1,12 @@
 package ca.etsmtl.taf.performance.gatling.services;
 
 import ca.etsmtl.taf.performance.gatling.config.GatlingConfigurator;
+import ca.etsmtl.taf.performance.gatling.model.GatlingTestResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -12,6 +15,22 @@ import java.util.Comparator;
 @Service
 public class ReportService {
     private final String REPORT_PATH = "/reports/performance/gatling/dashboard/";
+
+    public GatlingTestResult getLatestReportResult() throws IOException {
+        File reportsDirFile = getReportsDir();
+        File latestReportDir = findLatestReportDirectory(reportsDirFile);
+        if (latestReportDir != null) {
+            File reportFile = new File(latestReportDir, "js/assertions.json");
+            if (reportFile.exists()) {
+                return buildReportResult(reportFile);
+            } else {
+                throw new RuntimeException("Aucun rapport de résultats n’a été trouvé dans le dernier répertoire.");
+            }
+        } else {
+            throw new RuntimeException("Aucun répertoire de rapport trouvé.");
+        }
+    }
+
     public String getLatestReportPath() {
         File reportsDirFile = getReportsDir();
         File latestReportDir = findLatestReportDirectory(reportsDirFile);
@@ -43,6 +62,15 @@ public class ReportService {
     }
 
     private String buildReportPath(File latestReportDir) {
-        return REPORT_PATH  + latestReportDir.getName() + "/index.html";
+        return REPORT_PATH + latestReportDir.getName() + "/index.html";
     }
+
+    private GatlingTestResult buildReportResult(File resultFile) throws IOException {
+        try {
+            return new ObjectMapper().readValue(resultFile, GatlingTestResult.class);
+        } catch (IOException e) {
+            throw new IOException("Failed to parse Gatling JSON report: " + resultFile.getAbsolutePath(), e);
+        }
+    }
+
 }
