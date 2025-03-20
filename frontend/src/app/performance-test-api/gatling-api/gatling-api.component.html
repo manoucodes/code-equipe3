@@ -20,12 +20,14 @@
           <thead>
           <tr>
             <th>Assertion</th>
+            <th>Valeur</th>
             <th>Statut</th>
           </tr>
           </thead>
           <tbody>
           <tr [ngClass]="assertion.result ? 'assertion-success' : 'assertion-fail'" *ngFor="let assertion of testResult.assertions">
             <td>{{ assertion.message }}</td>
+            <td>{{ assertion.actualValue}}</td>
             <td>{{ assertion.result ? 'SUCCÈS' : 'ÉCHEC' }}</td>
           </tr>
           </tbody>
@@ -136,7 +138,7 @@
 
         <div class="row">
           <div class="form-group col">
-            <label for="meanResponseTime"><b>Temps de réponse moyen <span class="required-star">*</span></b></label>
+            <label for="meanResponseTime"><b>Temps de réponse moyen (ms) <span class="required-star">*</span></b></label>
             <span mat-icon-button
                   matTooltip="Le temps de réponse moyen (en ms) attendu. Pour valider ce critère, le temps de réponse moyen devra être inférieur à la valeure choisie.">
               <mat-icon>info</mat-icon>
@@ -145,7 +147,7 @@
                    name="assertionMeanResponseTime" placeholder="50">
           </div>
           <div class="form-group col">
-            <label for="failedRequestsPercent"><b>Pourcentage d'échecs <span class="required-star">*</span></b></label>
+            <label for="failedRequestsPercent"><b>Pourcentage d'échecs (%) <span class="required-star">*</span></b></label>
             <span mat-icon-button
                   matTooltip="Le pourcentage d'échec maximum toléré. Pour valider ce critère, le pourcentage d'échec devra être inférieur à la valeure choisie.">
               <mat-icon>info</mat-icon>
