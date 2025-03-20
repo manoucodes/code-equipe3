@@ -7,38 +7,6 @@
         <h2>Résultat des tests</h2>
       </div>
       <div class="modal-body">
-
-        <!-- <div class="table-responsive">
-                    <table id="result_table" class="table table-striped">
-                        <thead style="background-color: bg;">
-                            <tr>
-                                <th>Label</th>
-                                <th>Thread Name</th>
-                                <th>URL</th>
-                                <th>Response Code</th>
-                                <th>Latency</th>
-                                <th>Status</th>
-                                <th>Détail</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let result of testResults">
-                                <td>{{ result.label }}</td>
-                                <td>{{ result.threadName }}</td>
-                                <td>{{ result.url }}</td>
-                                <td>{{ result.responseCode }}</td>
-                                <td>{{ result.latency }}</td>
-                                <td
-                                    [style.background-color]="result.success === 'true' ? 'rgba(60, 179, 113, 0.3)' : 'rgba(255, 0, 0, 0.2)'">
-                                    {{ result.success === 'true' ? 'Success' : 'Failed' }}
-                                </td>
-                                <td>
-                                    <button mat-raised-button style="background-color: #007bff; color: white;" (click)="showTestDetails(result)">Détail</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div> -->
         <span *ngIf="testResult && testResult.length > 0" class="result-icon success">&#10004;</span>
         <p *ngIf="testResult && testResult.length > 0">Le rapport a été généré avec succès.</p>
         <button mat-raised-button class="showbutton" color="primary" (click)="showLatestReport()">Afficher le
@@ -75,27 +43,24 @@
     </div>
   </div>
 
-  <!-- Bouton pour afficher/masquer la sidebar HTTP -->
   <div *ngIf="showHttpButton" class="sidebar-toggle" (click)="toggleHttpSidebar()">
     <h1>i</h1>
   </div>
   <div class="sidebar http-sidebar"
     [ngClass]="{'sidebar-visible': isHttpSidebarVisible, 'sidebar-hidden': !isHttpSidebarVisible}">
-    <!-- HTTP Sidebar -->
     <div class="sidebar-content">
       <div class="description" id="http-description">
         <p>
-          <br>
-          <br>
+          <br><br>
           <b>JMeter HTTP</b>
           <br>
           Apache JMeter est un outil open-source de test de charge et de performance pour évaluer les performances des
           applications web.<br>
           Pour configurer un test avec JMeter, vous devez définir les paramètres suivants :
-          <br><br><b>Nombre d'utilisateurs :</b> Le nombre d'utilisateurs simultanés, simulant des charges
-          réalistes pour évaluer les performances de l'application dans différentes conditions de trafic.
-          <br><br><b>Temps de montée :</b> Le temps nécessaire pour augmenter progressivement le nombre
-          d'utilisateurs simultanés.
+          <br><br><b>Nombre d'utilisateurs :</b> Le nombre d'utilisateurs simultanés, simulant des charges réalistes
+          pour évaluer les performances de l'application dans différentes conditions de trafic.
+          <br><br><b>Temps de montée :</b> Le temps nécessaire pour augmenter progressivement le nombre d'utilisateurs
+          simultanés.
           <br><br><b>Durée du test :</b> La durée totale du test.
           <br><br><b>Nombre de boucles :</b> Le nombre de fois que le test sera répété.
           <br><br><b>Domaine :</b> Le domaine de l'application à tester.
@@ -108,37 +73,32 @@
     </div>
   </div>
 
-  <!-- Bouton pour afficher/masquer la sidebar FTP -->
   <div *ngIf="showFtpButton" class="sidebar-toggle" (click)="toggleFtpSidebar()">
     <h1>i</h1>
   </div>
   <div class="sidebar ftp-sidebar"
     [ngClass]="{'sidebar-visible': isFtpSidebarVisible, 'sidebar-hidden': !isFtpSidebarVisible}">
-    <!-- FTP Sidebar -->
     <div class="sidebar-content">
       <div class="description" id="ftp-description">
         <p>
-          <br>
-          <br>
+          <br><br>
           <b>JMeter FTP</b>
           <br>
-          JMeter FTP Request est un service destiné à gérer les requêtes variables FTP dans Apache JMeter, un
-          outil open-source de test de charge et de performance utilisé pour évaluer les performances des
-          applications web. Cette classe est conçue pour gérer différents paramètres nécessaires à la
-          configuration des tests FTP, notamment :
-          <br><br><b>Nombre d'utilisateurs :</b> Le nombre d'utilisateurs simultanés, simulant des charges
-          réalistes pour évaluer les performances de l'application dans différentes conditions de trafic.
-          <br><br><b>Temps de montée :</b> Le temps nécessaire pour augmenter progressivement le nombre
-          d'utilisateurs simultanés.
+          JMeter FTP Request est un service destiné à gérer les requêtes variables FTP dans Apache JMeter, un outil
+          open-source de test de charge et de performance utilisé pour évaluer les performances des applications web.
+          Cette classe est conçue pour gérer différents paramètres nécessaires à la configuration des tests FTP,
+          notamment :
+          <br><br><b>Nombre d'utilisateurs :</b> Le nombre d'utilisateurs simultanés, simulant des charges réalistes
+          pour évaluer les performances de l'application dans différentes conditions de trafic.
+          <br><br><b>Temps de montée :</b> Le temps nécessaire pour augmenter progressivement le nombre d'utilisateurs
+          simultanés.
           <br><br><b>Durée du test :</b> La durée totale du test.
           <br><br><b>Boucle :</b> Indique le nombre de fois que le test sera répété.
           <br><br><b>Domaine :</b> Définit le domaine de l'application testée (URL du serveur FTP).
           <br><br><b>Port :</b> Spécifie le port utilisé pour la connexion FTP.
           <br><br><b>Méthode :</b> Indique la méthode FTP à utiliser (ex. : Get, Post).
-          <br><br><b>Fichier distant :</b> Spécifie le chemin d'accès au fichier distant pour les opérations
-          FTP.
-          <br><br><b>Fichier local :</b> Définit le chemin d'accès au fichier local utilisé dans les
-          interactions FTP.
+          <br><br><b>Fichier distant :</b> Spécifie le chemin d'accès au fichier distant pour les opérations FTP.
+          <br><br><b>Fichier local :</b> Définit le chemin d'accès au fichier local utilisé dans les interactions FTP.
           <br><br><b>Nom d'utilisateur :</b> Représente le nom d'utilisateur FTP pour l'authentification.
           <br><br><b>Mot de passe :</b> Spécifie le mot de passe FTP pour l'authentification.
         </p>
@@ -146,29 +106,13 @@
     </div>
   </div>
 
-
-
-  <!-- Titre formulaire : Configuration de test pour JMeter -->
   <div class="container">
-    <div class="switch-container-fixed">
-      <label class="switch">
-        <input type="checkbox" id="formSwitch" (change)="toggleForms()">
-        <span class="slider"></span>
-      </label>
-      <span id="switchLabel">HTTP</span>
-    </div>
-
     <div class="main" [ngClass]="{'sidebar-visible': isHttpSidebarVisible || isFtpSidebarVisible}">
       <div class="content">
-        <form id="http-form" (ngSubmit)="onHttpSubmit()">
-          <div class="form-title">
-            <img src="assets/logo/jmeter-logo.png" alt="JMeter Icon" class="jmeter-icon">
-            <span class="hover-text">Apache JMeter : Outil de test de performance</span>
-          </div>
-
+        <form [formGroup]="httpForm" id="http-form" (ngSubmit)="onHttpSubmit()">
           <div class="form-group scenario-selector">
             <label for="scenarioSelect"><strong>Preconfigured Scenarios</strong></label>
-            <select class="form-control" id="scenarioSelect" [(ngModel)]="selectedScenario"
+            <select class="form-control" id="scenarioSelect" formControlName="selectedScenario"
               (change)="onScenarioSelect()" name="scenarioSelect">
               <option value="">Select a scenario...</option>
               <option *ngFor="let scenario of scenarioConfigurations" [value]="scenario.name"
@@ -178,97 +122,66 @@
             </select>
           </div>
 
-          <!-- Configuration de base -->
-          <div class="section-title"
-            title="Pour configurer un test avec JMeter HTTP, vous devez définir les paramètres suivants :">
+          <div class="section-title">
             <h2>Configuration de base HTTP</h2>
           </div>
-          <!-- Configuration -->
           <div class="row">
             <div class="form-group col">
-              <label for="nbThreads"
-                title="Le nombre d'utilisateurs simultanés, simulant des charges réalistes pour évaluer les performances de l'application dans différentes conditions de trafic.">
-                <strong>Nombre d'utilisateurs <span class="required-star">*</span></strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.nbThreads" name="nbThreads"
+              <label for="nbThreads"><strong>Nombre d'utilisateurs <span class="required-star">*</span></strong></label>
+              <input type="text" class="form-control" formControlName="nbThreads" name="nbThreads"
                 placeholder="Exemple">
             </div>
             <div class="form-group col">
-              <label for="rampTime"
-                title="Le temps nécessaire pour augmenter progressivement le nombre d'utilisateurs simultanés. (ex. 5)">
-                <strong>Temps de montée <span class="required-star"> </span></strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.rampTime" name="rampTime"
-                placeholder="Exemple">
+              <label for="rampTime"><strong>Temps de montée <span class="required-star"> </span></strong></label>
+              <input type="text" class="form-control" formControlName="rampTime" name="rampTime" placeholder="Exemple">
             </div>
             <div class="form-group col">
-              <label for="duration" title="La durée totale du test.">
-                <strong>Durée du test <span class="required-star"> </span></strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.duration" name="duration"
-                placeholder="Exemple">
+              <label for="duration"><strong>Durée du test <span class="required-star"> </span></strong></label>
+              <input type="text" class="form-control" formControlName="duration" name="duration" placeholder="Exemple">
             </div>
             <div class="form-group col">
-              <label for="loop" title="Le nombre de fois que le test sera répété. (ex. 3)">
-                <strong>Nombre de boucles <span class="required-star">*</span></strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.loop" name="loop" placeholder="Exemple">
+              <label for="loop"><strong>Nombre de boucles <span class="required-star">*</span></strong></label>
+              <input type="text" class="form-control" formControlName="loop" name="loop" placeholder="Exemple">
             </div>
           </div>
 
-          <!-- Détails de la requête -->
           <div class="section-title">
             <h2> Détails de la requête</h2>
           </div>
-
-
           <div class="row">
-            <label for="fullUri" title="Addresse http, ">
-              <strong>URI automatique</strong>
-            </label>
-            <input type="text" class="form-control" [(ngModel)]="http_uri" name="http_uri"
-              placeholder="http://localhost:8080" (blur)="parseUri()" />
+            <label for="fullUri"><strong>URI automatique</strong></label>
+            <input type="text" class="form-control" formControlName="httpUri" placeholder="http://localhost:8080"
+              (blur)="parseUri()" />
+
+
           </div>
 
           <div class="row">
             <div class="form-group col">
-              <label for="domain" title="Le domaine de l'application à tester. (ex. https://httpbin.org/)">
-                <strong>Domaine <span class="required-star">*</span></strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.domain" name="domain"
-                placeholder="Exemple">
+              <label for="domain"><strong>Domaine <span class="required-star">*</span></strong></label>
+              <input type="text" class="form-control" formControlName="domain" name="domain" placeholder="Exemple">
             </div>
             <div class="form-group col">
-              <label for="port" title="Le port à  utiliser pour la connexion.">
-                <strong>Port</strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.port" name="port" placeholder="Exemple">
+              <label for="port"><strong>Port</strong></label>
+              <input type="text" class="form-control" formControlName="port" name="port" placeholder="Exemple">
             </div>
             <div class="form-group col">
-              <label for="protocol" title="Le protocole à utiliser pour la connexion (ex. HTTP, HTTPS).">
-                <strong>Protocole <span class="required-star">*</span></strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.protocol" name="protocol"
-                placeholder="Exemple">
+              <label for="protocol"><strong>Protocole <span class="required-star">*</span></strong></label>
+              <input type="text" class="form-control" formControlName="protocol" name="protocol" placeholder="Exemple">
             </div>
             <div class="form-group col">
-              <label for="path" title="Le chemin de l'URL après le domaine et le port. (ex. get)">
-                <strong>Chemin <span class="required-star">*</span></strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.path" name="path" placeholder="Exemple">
+              <label for="path"><strong>Chemin <span class="required-star">*</span></strong></label>
+              <input type="text" class="form-control" formControlName="path" name="path" placeholder="Exemple">
             </div>
           </div>
 
-          <!-- Paramètres de la requête -->
           <div class="section-title">
             <h2> Paramètres de la requête</h2>
           </div>
           <div class="row">
             <div class="form-group col">
-              <label for="typeRequete" title="Le type de requête à utiliser (ex. GET, POST, PUT, DELETE, PATCH).">
-                <strong>Type de requête <span class="required-star">*</span></strong>
-              </label>
-              <select class="form-control" id="typeRequete" [(ngModel)]="http_request.method" name="methodType">
+              <label for="typeRequete"><strong>Type de requête <span class="required-star">*</span></strong></label>
+              <select class="form-control" id="typeRequete" formControlName="method" name="methodType">
                 <option disabled selected value="">GET, POST...</option>
                 <option>GET</option>
                 <option>POST</option>
@@ -278,75 +191,55 @@
               </select>
             </div>
             <div class="form-group col">
-              <label for="data" title="Les données à inclure dans la requête.">
-                <strong>Données</strong>
-              </label>
-              <input type="text" class="form-control" [(ngModel)]="http_request.data" name="data" placeholder="Exemple">
+              <label for="data"><strong>Données</strong></label>
+              <input type="text" class="form-control" formControlName="data" name="data" placeholder="Exemple">
             </div>
-          </div>
-
-          <div class="row button-row">
-            <button type="button" mat-raised-button class="test-button" color="primary"
-              (click)="onHttpSubmit()">Tester</button>
           </div>
         </form>
 
         <form id="ftp-form" (ngSubmit)="onFtpSubmit()" style="display: none;">
-          <div class="form-title">
-            <img src="assets/logo/jmeter-logo.png" alt="JMeter Icon" class="jmeter-icon">
-            <span class="hover-text">Apache JMeter : Outil de test de performance</span>
-          </div>
-          <!-- Configuration de base -->
           <div class="section-title">
             <h2> Configuration de base FTP</h2>
           </div>
           <div class="row">
             <div class="form-group col">
-              <label for="nbThreadsFtp"
-                title="Le nombre d'utilisateurs simultanés, simulant des charges réalistes pour évaluer les performances de l'application dans différentes conditions de trafic."><strong>Nombre
-                  d'utilisateurs <span class="required-star">*</span></strong></label>
+              <label for="nbThreadsFtp"><strong>Nombre d'utilisateurs <span
+                    class="required-star">*</span></strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.nbThreads" name="nbThreadsFtp"
                 placeholder="entrez nombre d'utilisateurs" required>
             </div>
             <div class="form-group col">
-              <label for="rampTime"
-                title="Le temps nécessaire pour augmenter progressivement le nombre d'utilisateurs simultanés."><strong>Temps
-                  de montée</strong></label>
+              <label for="rampTime"><strong>Temps de montée</strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.rampTime" name="rampTime"
                 placeholder="entrez temps de montée">
             </div>
             <div class="form-group col">
-              <label for="duration" title="La durée totale du test."><strong>Durée du test</strong></label>
+              <label for="duration"><strong>Durée du test</strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.duration" name="duration"
                 placeholder="ex 100 secondes">
             </div>
             <div class="form-group col">
-              <label for="loopFtp" title=" Indique le nombre de fois que le test sera répété."><strong>Nombre de boucles
-                  <span class="required-star">*</span></strong></label>
+              <label for="loopFtp"><strong>Nombre de boucles <span class="required-star">*</span></strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.loop" name="loopFtp"
                 placeholder="1,2,3.." required>
             </div>
           </div>
 
-          <!-- Détails de la requête -->
           <div class="section-title">
             <h2> Détails de la requête</h2>
           </div>
           <div class="row">
             <div class="form-group col">
-              <label for="domainFtp"
-                title="Définit le domaine de l'application testée (URL du serveur FTP)."><strong>Domaine <span
-                    class="required-star">*</span></strong></label>
+              <label for="domainFtp"><strong>Domaine <span class="required-star">*</span></strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.domain" name="domainFtp"
                 placeholder="ex ftp.testserver.com" required>
             </div>
             <div class="form-group col">
-              <label for="port" title="Spécifie le port utilisé pour la connexion FTP."><strong>Port</strong></label>
+              <label for="port"><strong>Port</strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.port" name="port" placeholder="ex 21">
             </div>
             <div class="form-group col">
-              <label for="method" title="ndique la méthode FTP à utiliser (ex. : Get, Post)."><strong>Type de requête
-                  <span class="required-star">*</span></strong></label>
+              <label for="method"><strong>Type de requête <span class="required-star">*</span></strong></label>
               <select class="form-control" id="method" [(ngModel)]="ftp_request.method" name="methodTypeFtp" required>
                 <option disabled selected value="">GET(Retrive), POST(Store)...</option>
                 <option>Retrive</option>
@@ -355,41 +248,33 @@
             </div>
           </div>
 
-          <!-- Paramètres de la requête -->
           <div class="section-title">
             <h2> Paramètres de la requête</h2>
           </div>
           <div class="row">
             <div class="form-group col">
-              <label for="remotefile"
-                title="Spécifie le chemin d'accès au fichier distant pour les opérations FTP."><strong>Fichier
-                  distant</strong></label>
+              <label for="remotefile"><strong>Fichier distant</strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.remotefile" name="remotefile"
                 placeholder="jmeter.docx">
             </div>
             <div class="form-group col">
-              <label for="localfile"
-                title="Définit le chemin d'accès au fichier local utilisé dans les interactions FTP."><strong>Fichier
-                  local</strong></label>
+              <label for="localfile"><strong>Fichier local</strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.localfile" name="localfile"
                 placeholder="C:/Users/mgl805/Downloads/jmeter.docx">
             </div>
           </div>
 
-          <!-- Authentification -->
           <div class="section-title">
             <h2>Authentification</h2>
           </div>
           <div class="row">
             <div class="form-group col">
-              <label for="username" title="Représente le nom d'utilisateur FTP pour l'authentification."><strong>Nom
-                  d'utilisateur</strong></label>
+              <label for="username"><strong>Nom d'utilisateur</strong></label>
               <input type="text" class="form-control" [(ngModel)]="ftp_request.username" name="username"
                 placeholder="Exemple">
             </div>
             <div class="form-group col">
-              <label for="password" title="Spécifie le mot de passe FTP pour l'authentification."><strong>Mot de
-                  passe</strong></label>
+              <label for="password"><strong>Mot de passe</strong></label>
               <input type="password" class="form-control" [(ngModel)]="ftp_request.password" name="password"
                 placeholder="Exemple">
             </div>
@@ -403,3 +288,4 @@
       </div>
     </div>
   </div>
+</div>

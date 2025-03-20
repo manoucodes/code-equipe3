@@ -1,0 +1,59 @@
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h2>Performance Tests Dashboard</h2>
+        <button mat-raised-button color="primary" (click)="runAllTests()" [disabled]="!tests.length || isProcessing">
+            <span *ngIf="!isProcessing">Run All Tests</span>
+            <span *ngIf="isProcessing">Running Tests...</span>
+            <mat-icon *ngIf="isProcessing" class="spin-icon">autorenew</mat-icon>
+        </button>
+    </div>
+
+    <button mat-icon-button color="primary">
+        <mat-icon aria-label="Example icon-button with a heart icon" (click)="addTest()">add</mat-icon>
+    </button>
+
+    <table mat-table [dataSource]="tests" class="mat-elevation-z8">
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let test"> {{ test.name }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef> Type </th>
+            <td mat-cell *matCellDef="let test"> {{ test.type }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> Description </th>
+            <td mat-cell *matCellDef="let test"> {{ test.description }} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="configuration">
+            <th mat-header-cell *matHeaderCellDef> Configuration </th>
+            <td mat-cell *matCellDef="let test">
+                <pre>{{ test.configuration | json }}</pre>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Status </th>
+            <td mat-cell *matCellDef="let test">
+                <span [class]="test.status?.toLowerCase() || 'pending'">
+                    {{ test.status || 'Pending' }}
+                </span>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let test; let i = index">
+                <button mat-icon-button color="warn" (click)="removeTest(i)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div>

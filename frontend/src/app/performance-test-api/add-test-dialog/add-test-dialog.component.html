@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Add New Performance Test</h2>
+<mat-dialog-content>
+    <form [formGroup]="configForm">
+        <!-- Provider Selection -->
+        <mat-form-field appearance="fill">
+            <mat-label>Provider</mat-label>
+            <mat-select formControlName="provider" required>
+                <mat-option value="jmeter">JMeter</mat-option>
+                <mat-option value="gatling">Gatling</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Test Type Selection (JMeter only) -->
+        <mat-form-field *ngIf="configForm.value.provider === 'jmeter'" appearance="fill">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="testType" required>
+                <mat-option value="http">HTTP</mat-option>
+                <mat-option value="ftp">FTP</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Test Name -->
+        <mat-form-field appearance="fill">
+            <mat-label>Test Name</mat-label>
+            <input matInput formControlName="name" required>
+        </mat-form-field>
+
+        <!-- JMeter Configuration -->
+        <app-jmeter-api *ngIf="configForm.value.provider === 'jmeter' && configForm.value.testType === 'http'"
+            (parametersReady)="onTestParametersReceived($event)">
+        </app-jmeter-api>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSubmit()"
+        [disabled]="!configForm.valid || (requiresParameters && !testParameters)" [matTooltip]="getTooltipMessage()">
+        Save Test
+    </button>
+
+</mat-dialog-actions>

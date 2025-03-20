@@ -43,6 +43,7 @@ export class PerformanceTestApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
+    console.log('jmeter_request', jmeter_http_request)
     return this.http.post(url, jmeter_http_request, httpOptions);
   }
 

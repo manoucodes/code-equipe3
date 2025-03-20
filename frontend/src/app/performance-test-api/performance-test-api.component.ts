@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class PerformanceTestApiComponent implements OnInit {
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   runGatlingTest() {
     // Navigate to Gatling test component

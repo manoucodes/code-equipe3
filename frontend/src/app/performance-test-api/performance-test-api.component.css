@@ -1,4 +1,4 @@
-.container{
+.container {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -15,12 +15,12 @@
   background: #f5f5fa;
   border: 0;
   border-radius: 8px;
-  box-shadow: -10px -10px 30px 0 #fff,10px 10px 30px 0 #1d0dca17;
+  box-shadow: -10px -10px 30px 0 #fff, 10px 10px 30px 0 #1d0dca17;
   box-sizing: border-box;
   color: #2a1f62;
   cursor: pointer;
   display: flex;
-  font-family: "Cascadia Code",Consolas,Monaco,"Andale Mono","Ubuntu Mono",monospace;
+  font-family: "Cascadia Code", Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
   font-size: 1rem;
   justify-content: center;
   line-height: 1.5rem;
@@ -61,6 +61,6 @@
   align-items: center;
 }
 
-.left-button{
+.left-button {
   margin-right: 150px;
 }

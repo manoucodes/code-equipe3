@@ -7,11 +7,11 @@ import { TestApiComponent } from './interface-test-api/test-api/test-api.compone
 import { LoginComponent } from './login/login.component';
 import { GatlingApiComponent } from './performance-test-api/gatling-api/gatling-api.component';
 import { JmeterApiComponent } from './performance-test-api/jmeter-api/jmeter-api.component';
-import { PerformanceTestApiComponent } from './performance-test-api/performance-test-api.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ProjectComponent } from './project/project.component';
 import { RegisterComponent } from './register/register.component';
 import { TestSeleniumComponent } from './selenium/test-selenium.component';
+import { PerformanceDashboardComponent } from './performance-test-api/performance-dashboard.component';
 
 
 const routes: Routes = [
@@ -24,8 +24,7 @@ const routes: Routes = [
   { path: 'admin', component: BoardAdminComponent },
   { path: 'test-api', component: TestApiComponent },
   { path: 'test-selenium', component: TestSeleniumComponent },
-  { path: 'performance-test-api', component: PerformanceTestApiComponent },
-  { path: 'performance-test-api', component: PerformanceTestApiComponent },
+  { path: 'performance-test-api', component: PerformanceDashboardComponent },
   { path: 'gatling-test', component: GatlingApiComponent },
   { path: 'jmeter-test', component: JmeterApiComponent },
   { path: '', redirectTo: 'home', pathMatch: 'full' }

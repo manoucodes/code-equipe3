@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JMeterHttpRequest } from './jmeter-http-request';
 import { JMeterFTPRequest } from './jmeter-ftp-request';
@@ -18,6 +18,11 @@ import { environment } from 'src/environments/environment';
   ],
 })
 export class JmeterApiComponent implements OnInit {
+
+  @Input() testType: 'http' | 'ftp' = 'http';
+  @Output() parametersReady = new EventEmitter<JMeterHttpRequest>();
+  @Output() ftpParametersReady = new EventEmitter<JMeterFTPRequest>();
+
   isHttpSidebarVisible: boolean = false;
   isFtpSidebarVisible: boolean = false;
   showHttpButton: boolean = true;
@@ -42,7 +47,8 @@ export class JmeterApiComponent implements OnInit {
 
   testResults: any[] = [];
   result_table: HTMLElement | null = document.getElementById('result_table');
-  httpForm: HTMLElement | null = document.getElementById('http-form');
+  // httpForm: HTMLElement | null = document.getElementById('http-form');
+  httpForm: FormGroup;
   ftpForm: HTMLElement | null = document.getElementById('ftp-form');
   switchLabel: HTMLElement | null = document.getElementById('switchLabel');
   switchCheckbox: HTMLInputElement | null = document.getElementById(
@@ -53,13 +59,30 @@ export class JmeterApiComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private performanceTestApiService: PerformanceTestApiService) { }
+    private performanceTestApiService: PerformanceTestApiService
+  ) {
+    this.httpForm = this.fb.group({
+      nbThreads: [this.http_request.nbThreads, Validators.required],
+      rampTime: [this.http_request.rampTime],
+      duration: [this.http_request.duration],
+      domain: [this.http_request.domain, Validators.required],
+      port: [this.http_request.port],
+      protocol: [this.http_request.protocol, Validators.required],
+      path: [this.http_request.path, Validators.required],
+      method: [this.http_request.method, Validators.required],
+      loop: [this.http_request.loop, Validators.required],
+      data: [this.http_request.data],
+      selectedScenario: [null],
+      httpUri: [null],
+
+    });
+  }
 
   ngOnInit(): void {
     this.modal = document.getElementById('myModal');
     this.span = document.getElementsByClassName('close')[0];
     this.result_table = document.getElementById('result_table');
-    this.httpForm = document.getElementById('http-form');
+    // this.httpForm = document.getElementById('http-form');
     this.ftpForm = document.getElementById('ftp-form');
     this.switchLabel = document.getElementById('switchLabel');
     this.http_description = document.getElementById('http-description');
@@ -70,6 +93,31 @@ export class JmeterApiComponent implements OnInit {
     ) as HTMLInputElement;
 
     this.updateButtonVisibility();
+
+    this.httpForm.valueChanges.subscribe(formValues => {
+      this.http_request = { ...this.http_request, ...formValues };
+      console.log('Updated http_request:', this.http_request);
+      this.onHttpSubmit();
+    });
+
+  }
+
+  onHttpSubmit() {
+
+    console.log('Submitting JMeter HTTP form');
+    if (this.validateHttpForm()) {
+      console.log("submit");
+      console.log('Validation passed, emitting:', this.http_request);
+      this.parametersReady.emit(this.http_request);
+    } else {
+      console.warn('JMeter form validation failed');
+    }
+  }
+
+  onFtpSubmit() {
+    if (this.validateFtpForm()) {
+      this.ftpParametersReady.emit(this.ftp_request);
+    }
   }
 
   toggleHttpSidebar() {
@@ -150,16 +198,20 @@ export class JmeterApiComponent implements OnInit {
 
   onScenarioSelect() {
 
-    const scenario = this.scenarioConfigurations.find(scenario => scenario.name === this.selectedScenario);
+    const selectedScenario = this.httpForm.value.selectedScenario;
+    const scenario = this.scenarioConfigurations.find(
+      s => s.name === selectedScenario
+    );
     if (!scenario) return;
 
     if (scenario.type === 'http') {
-      this.applyScenario(this.http_request, scenario.config);
+      this.httpForm.patchValue(scenario.config);
     } else if (scenario.type === 'ftp') {
-      this.applyScenario(this.ftp_request, scenario.config);
+      // Handle FTP scenario differently
     }
-
   }
+  // this.applyScenario(this.ftp_request, scenario.config);
+
 
   applyScenario<T>(target: T, source: Partial<T>): T {
     Object.keys(source).forEach(key => {
@@ -177,17 +229,23 @@ export class JmeterApiComponent implements OnInit {
   }
 
   parseUri() {
-    if (this.http_uri) {
+    const uri = this.httpForm.get('httpUri')?.value;
+    if (uri) {
       try {
-        const url = new URL(this.http_uri);
+        // Prepend 'http://' if missing
+        const parsedUri = uri.startsWith('http://') || uri.startsWith('https://') ? uri : `http://${uri}`;
+        const url = new URL(parsedUri);
 
-        this.http_request.domain = url.hostname;
-        this.http_request.port = url.port || '';
-        this.http_request.protocol = url.protocol.replace(':', '');
-        this.http_request.path = url.pathname;
-
+        // Update form controls using patchValue
+        this.httpForm.patchValue({
+          domain: url.hostname,
+          port: url.port || '',
+          protocol: url.protocol.replace(':', ''),
+          path: url.pathname
+        });
       } catch (error) {
         console.error('Invalid URI:', error);
+        // Optionally handle the error in the UI
       }
     }
   }
@@ -258,77 +316,77 @@ export class JmeterApiComponent implements OnInit {
     return isValid;
   }
 
-  onHttpSubmit(showAlert: boolean = false) {
-    if (!this.validateHttpForm()) {
-      return;
-    }
+  // onHttpSubmit(showAlert: boolean = false) {
+  //   if (!this.validateHttpForm()) {
+  //     return;
+  //   }
 
-    this.busy = this.performanceTestApiService
-      .sendHttpJMeterRequest(this.http_request)
-      .subscribe((response: any) => {
-        this.testResults = response;
+  //   this.busy = this.performanceTestApiService
+  //     .sendHttpJMeterRequest(this.http_request)
+  //     .subscribe((response: any) => {
+  //       this.testResults = response;
 
-        // Transformation de la réponse pour inclure des informations sur le succès ou l'échec global
-        const successMessage = response.length != 0;
-        this.testResult = [{
-          success: successMessage,
-          details: response.details // Assurez-vous que les détails sont inclus dans la réponse
-        }];
+  //       // Transformation de la réponse pour inclure des informations sur le succès ou l'échec global
+  //       const successMessage = response.length != 0;
+  //       this.testResult = [{
+  //         success: successMessage,
+  //         details: response.details // Assurez-vous que les détails sont inclus dans la réponse
+  //       }];
 
-        // Ajouter un message indiquant que le rapport a été généré
-        if (successMessage) {
-          this.testResult.push({
-            message: 'Le rapport a été généré avec succès.',
-            success: true
-          });
-        }
+  //       // Ajouter un message indiquant que le rapport a été généré
+  //       if (successMessage) {
+  //         this.testResult.push({
+  //           message: 'Le rapport a été généré avec succès.',
+  //           success: true
+  //         });
+  //       }
 
-        if (successMessage) {
-          this.modal!.style.display = 'block';
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Erreur',
-            text: "Le test a échoué, révisez votre configuration de test",
-          })
-        }
-      }, (error: any) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Erreur',
-          text: "Le test a échoué, révisez votre configuration de test",
-        })
-      });
-  }
+  //       if (successMessage) {
+  //         this.modal!.style.display = 'block';
+  //       } else {
+  //         Swal.fire({
+  //           icon: 'error',
+  //           title: 'Erreur',
+  //           text: "Le test a échoué, révisez votre configuration de test",
+  //         })
+  //       }
+  //     }, (error: any) => {
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Erreur',
+  //         text: "Le test a échoué, révisez votre configuration de test",
+  //       })
+  //     });
+  // }
 
-  onFtpSubmit() {
-    if (!this.validateFtpForm()) {
-      return;
-    }
+  // onFtpSubmit() {
+  //   if (!this.validateFtpForm()) {
+  //     return;
+  //   }
 
-    this.busy = this.performanceTestApiService
-      .sendFtpJMeterRequest(this.ftp_request)
-      .subscribe((response: any) => {
-        this.testResults = response;
-        this.testResult = response; // Ajoutez cette ligne
-        if (response.length != 0) {
-          this.modal!.style.display = 'block';
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Erreur',
-            text: "Le test a échoué, révisez votre configuration de test",
-          })
-        }
+  //   this.busy = this.performanceTestApiService
+  //     .sendFtpJMeterRequest(this.ftp_request)
+  //     .subscribe((response: any) => {
+  //       this.testResults = response;
+  //       this.testResult = response; // Ajoutez cette ligne
+  //       if (response.length != 0) {
+  //         this.modal!.style.display = 'block';
+  //       } else {
+  //         Swal.fire({
+  //           icon: 'error',
+  //           title: 'Erreur',
+  //           text: "Le test a échoué, révisez votre configuration de test",
+  //         })
+  //       }
 
-      }, (error: any) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Erreur',
-          text: "Le test a échoué, révisez votre configuration de test",
-        })
-      });
-  }
+  //     }, (error: any) => {
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Erreur',
+  //         text: "Le test a échoué, révisez votre configuration de test",
+  //       })
+  //     });
+  // }
 
   closeModal() {
     this.modal!.style.display = 'none';
@@ -354,7 +412,7 @@ export class JmeterApiComponent implements OnInit {
     this.selectedTest = null;
     this.modal!.style.display = 'none';
     if (this.httpForm) {
-      (this.httpForm as HTMLFormElement).reset();
+      this.httpForm.reset();
     }
     if (this.ftpForm) {
       (this.ftpForm as HTMLFormElement).reset();

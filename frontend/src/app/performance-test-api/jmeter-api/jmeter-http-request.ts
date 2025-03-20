@@ -10,5 +10,5 @@ export class JMeterHttpRequest {
     public method: string = '',
     public loop: string = '',
     public data: string = ''
-  ) {}
+  ) { }
 }
