@@ -49,6 +49,18 @@
 
 .form-group {
   margin-bottom: 10px;
+  position: relative;
+}
+
+.dropdown-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+select {
+  display: block;
+  width: 100%;
+  min-width: 200px;
 }
 
 .form-group textarea {
@@ -187,6 +199,23 @@
 
 .test-result-failure {
   color: #d9534f;
+}
+
+.request-assertions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.request-assertions-table th,
+.request-assertions-table td {
+  padding: 8px;
+  text-align: center;
+}
+
+.request-assertions-table input {
+  width: 80px;
+  text-align: center;
 }
 
 .assertions-table {

@@ -1,4 +1,4 @@
-import {GatlingRequest} from "../performance-test-api/gatling-api/gatling-request";
+import {GatlingRequest, ResponseTimePerPercentile} from "../performance-test-api/gatling-api/gatling-request";
 
 export const GATLING_SCENARIOS = [
   {
@@ -11,6 +11,7 @@ export const GATLING_SCENARIOS = [
         testRampUpDuration: 60,
         assertionMeanResponseTime: 100,
         assertionFailedRequestsPercent: 1,
+        assertionsResponseTimePerPercentile: [new ResponseTimePerPercentile(99, 250), new ResponseTimePerPercentile(95, 200)],
       })
   },
   {
@@ -22,6 +23,7 @@ export const GATLING_SCENARIOS = [
         testUsersAtOnce: 1,
         assertionMeanResponseTime: 100,
         assertionFailedRequestsPercent: 0,
+        assertionsResponseTimePerPercentile: [new ResponseTimePerPercentile(99, 250), new ResponseTimePerPercentile(95, 200)],
       })
   },
   {
@@ -34,6 +36,7 @@ export const GATLING_SCENARIOS = [
         testRampUpDuration: 60,
         assertionMeanResponseTime: 300,
         assertionFailedRequestsPercent: 5,
+        assertionsResponseTimePerPercentile: [new ResponseTimePerPercentile(99, 250), new ResponseTimePerPercentile(95, 200)],
       })
   },
   {
@@ -47,6 +50,7 @@ export const GATLING_SCENARIOS = [
         testUserRampUpPerSecondDuration: 150,
         assertionMeanResponseTime: 300,
         assertionFailedRequestsPercent: 5,
+        assertionsResponseTimePerPercentile: [new ResponseTimePerPercentile(99, 250), new ResponseTimePerPercentile(95, 200)],
       })
   },
   {
@@ -60,6 +64,7 @@ export const GATLING_SCENARIOS = [
         testUsersAtOnce: 500,
         assertionMeanResponseTime: 200,
         assertionFailedRequestsPercent: 5,
+        assertionsResponseTimePerPercentile: [new ResponseTimePerPercentile(99, 250), new ResponseTimePerPercentile(95, 200)],
       })
   }
 ];

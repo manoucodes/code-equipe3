@@ -17,6 +17,7 @@ export class GatlingRequest {
   testNothingFor: Number;
   assertionMeanResponseTime: Number;
   assertionFailedRequestsPercent: Number;
+  assertionsResponseTimePerPercentile: ResponseTimePerPercentile[];
 
   constructor({
                 simulationStrategy = 'DEFAULT',
@@ -37,6 +38,27 @@ export class GatlingRequest {
                 testNothingFor = 0,
                 assertionMeanResponseTime = -1,
                 assertionFailedRequestsPercent = -1,
+                assertionsResponseTimePerPercentile = [],
+              }: {
+                simulationStrategy?: string;
+                testBaseUrl?: string;
+                testScenarioName?: string;
+                testRequestName?: string;
+                testUri?: string;
+                testRequestBody?: string;
+                testMethodType?: string;
+                testUsersNumber?: Number;
+                testRampUpDuration?: Number;
+                testUsersAtOnce?: Number;
+                testUserRampUpPerSecondMin?: Number;
+                testUserRampUpPerSecondMax?: Number;
+                testUserRampUpPerSecondDuration?: Number;
+                testConstantUsers?: Number;
+                testConstantUsersDuration?: Number;
+                testNothingFor?: Number;
+                assertionMeanResponseTime?: Number;
+                assertionFailedRequestsPercent?: Number;
+                assertionsResponseTimePerPercentile?: ResponseTimePerPercentile[];
               }
   ) {
     this.simulationStrategy = simulationStrategy;
@@ -57,5 +79,16 @@ export class GatlingRequest {
     this.testNothingFor = testNothingFor;
     this.assertionMeanResponseTime = assertionMeanResponseTime;
     this.assertionFailedRequestsPercent = assertionFailedRequestsPercent;
+    this.assertionsResponseTimePerPercentile = assertionsResponseTimePerPercentile;
+  }
+}
+
+export class ResponseTimePerPercentile {
+  percentile: Number;
+  responseTime: Number;
+
+  constructor(percentile: Number, responseTime: Number) {
+    this.percentile = percentile;
+    this.responseTime = responseTime;
   }
 }

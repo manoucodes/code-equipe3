@@ -1,6 +1,7 @@
 package ca.etsmtl.taf.performance.gatling.simulation;
 
 import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequest;
+import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequestPercentileResponseTime;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.core.Assertion;
 import io.gatling.javaapi.core.ChainBuilder;
@@ -82,10 +83,18 @@ public class SpikeTestSimulation extends Simulation {
             assertions.add(global().failedRequests().percent().lt(gatlingTestRequest.getFailedRequestsPercent()));
         }
 
+        if (gatlingTestRequest.getResponseTimePerPercentile().size() > 0) {
+            for(GatlingTestRequestPercentileResponseTime assertion : gatlingTestRequest.getResponseTimePerPercentile()){
+                assertions.add(global().responseTime().percentile(assertion.getPercentile()).lt(assertion.getResponseTime()));
+            }
+        }
+
         setUp(
                 scn.injectOpen(
                         constantUsersPerSec(gatlingTestRequest.getConstantUsers()).during(Duration.ofSeconds(gatlingTestRequest.getConstantUsersDuration())),
-                        atOnceUsers(gatlingTestRequest.getUsersAtOnce())
+                        atOnceUsers(gatlingTestRequest.getUsersAtOnce()),
+                        constantUsersPerSec(gatlingTestRequest.getUsersAtOnce()).during(Duration.ofMinutes(3)),
+                        constantUsersPerSec(gatlingTestRequest.getConstantUsers()).during(Duration.ofSeconds(gatlingTestRequest.getConstantUsersDuration()))
                 )
         ).protocols(httpProtocol)
                 .assertions(assertions.toArray(new Assertion[0]));

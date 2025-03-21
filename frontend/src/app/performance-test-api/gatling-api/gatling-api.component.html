@@ -56,9 +56,9 @@
           <h1>Requête de test</h1>
         </div>
 
-        <div class="form-group scenario-selector">
-          <label for="scenarioSelect"><strong>Stratégie de test</strong></label>
-          <select class="form-control" id="scenarioSelect"  name="scenarioSelect" [(ngModel)]="selectedStrategy" (change)="onStrategySelect()">
+        <div class="form-group dropdown-wrapper">
+          <label for="strategySelect"><strong>Stratégie de test</strong></label>
+          <select class="form-control" id="strategySelect"  name="strategySelect" [(ngModel)]="selectedStrategy" (change)="onStrategySelect()">
             <option *ngFor="let strategy of strategies" [value]="strategy">
               {{ strategy }}
           </select>
@@ -236,6 +236,62 @@
                    name="assertionFailedRequestsPercent" placeholder="2">
           </div>
         </div>
+
+        <div class="form-subtitle" style="margin-top: 20px">
+          <label><b>Temps de réponse par percentile</b></label>
+        </div>
+
+        <div class="row">
+            <div class="form-group dropdown-wrapper col">
+              <label><b>Percentile (%)</b></label>
+              <select class="form-control" [(ngModel)]="newPercentile" name="newPercentile">
+                <option *ngFor="let p of percentiles" [value]="p">{{ p }}%</option>
+              </select>
+            </div>
+            <div class="form-group col">
+              <label><b>Temps max de réponse (ms)</b></label>
+              <input type="number" class="form-control" [(ngModel)]="newResponseTime"
+                     name="newResponseTime">
+            </div>
+            <div class="form-group col" style="display: flex; align-items: flex-end;">
+              <button mat-raised-button color="accent" type="button" (click)="addPercentile()">Ajouter</button>
+            </div>
+          </div>
+
+        <table class="table table-bordered request-assertions-table">
+          <thead>
+          <tr>
+            <th>Percentile (%)</th>
+            <th>Temps de réponse (ms)</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of request.assertionsResponseTimePerPercentile; let i = index">
+            <td>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="item.percentile"
+                name="percentile_{{ i }}"
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="item.responseTime"
+                name="responseTime_{{ i }}"
+              />
+            </td>
+            <td>
+              <button mat-icon-button color="warn" (click)="removePercentile(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
 
         <div class="row button-row">
           <div class="col-12 text-center">
