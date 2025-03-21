@@ -3,7 +3,7 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
 import {PerformanceTestApiService} from 'src/app/_services/performance-test-api.service';
 import Swal from 'sweetalert2';
-import {GatlingRequest} from './gatling-request';
+import {GatlingRequest, ResponseTimePerPercentile} from './gatling-request';
 import {ApiResponse, GatlingAssertionResult, GatlingTestResult} from "../../models/gatlingTestResult";
 import {GATLING_SCENARIOS} from "../../models/gatling-scenarios";
 
@@ -26,7 +26,13 @@ export class GatlingApiComponent implements OnInit {
   reportModal: HTMLElement | null = null;
   span: HTMLElement | null = null;
   testResult: any;
+
   gatlingTestResult: GatlingTestResult | null = null
+
+  percentiles: number[] = [50, 75, 90, 95, 99, 99.9];
+  newPercentile: number = 0;
+  newResponseTime: number = 0;
+
   testLog: string = "";
   latestReportContent: SafeHtml | null = null; // Contenu du dernier rapport de test
 
@@ -175,5 +181,25 @@ export class GatlingApiComponent implements OnInit {
 
     if(this.strategies.includes(this.selectedStrategy))
       this.request = GATLING_SCENARIOS.filter(scenario => scenario.name == this.selectedStrategy).map(it => it.config)[0]
+  }
+
+  addPercentile(): void {
+    console.log("HERE")
+    console.log(`newPercentile: ${this.newPercentile} and newResponseTime: ${this.newResponseTime}` )
+
+    if (this.newPercentile && this.newResponseTime) {
+
+      console.log("HERE222")
+      const newAssertion = new ResponseTimePerPercentile(this.newPercentile, this.newResponseTime);
+      console.log("assertion:" + newAssertion.percentile + "% - " + newAssertion.responseTime + "ms")
+      this.request.assertionsResponseTimePerPercentile.push(newAssertion);
+
+      // Reset les champs
+      this.newResponseTime = 0;
+    }
+  }
+
+  removePercentile(index: number): void {
+    this.request.assertionsResponseTimePerPercentile.splice(index, 1);
   }
 }

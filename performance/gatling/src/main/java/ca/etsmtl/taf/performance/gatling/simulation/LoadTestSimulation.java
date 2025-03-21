@@ -8,6 +8,7 @@ import static io.gatling.javaapi.core.CoreDsl.scenario;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static io.gatling.javaapi.http.HttpDsl.status;
 
+import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequestPercentileResponseTime;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequest;
@@ -85,6 +86,12 @@ public class LoadTestSimulation extends Simulation {
 
         if (gatlingTestRequest.getFailedRequestsPercent() >= 0) {
             assertions.add(global().failedRequests().percent().lt(gatlingTestRequest.getFailedRequestsPercent()));
+        }
+
+        if (gatlingTestRequest.getResponseTimePerPercentile().size() > 0) {
+            for(GatlingTestRequestPercentileResponseTime assertion : gatlingTestRequest.getResponseTimePerPercentile()){
+                assertions.add(global().responseTime().percentile(assertion.getPercentile()).lt(assertion.getResponseTime()));
+            }
         }
 
         setUp(
