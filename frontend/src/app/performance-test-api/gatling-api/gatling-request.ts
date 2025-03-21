@@ -1,4 +1,5 @@
 export class GatlingRequest {
+  simulationStrategy: string;
   testBaseUrl: string;
   testScenarioName: string;
   testRequestName: string;
@@ -6,21 +7,39 @@ export class GatlingRequest {
   testRequestBody: string;
   testMethodType: string;
   testUsersNumber: Number;
+  testRampUpDuration: Number;
+  testUsersAtOnce: Number;
+  testUserRampUpPerSecondMin: Number;
+  testUserRampUpPerSecondMax: Number;
+  testUserRampUpPerSecondDuration: Number;
+  testConstantUsers: Number;
+  testConstantUsersDuration: Number;
+  testNothingFor: Number;
   assertionMeanResponseTime: Number;
   assertionFailedRequestsPercent: Number;
 
   constructor({
+                simulationStrategy = 'DEFAULT',
                 testBaseUrl = '',
                 testScenarioName = '',
                 testRequestName = '',
                 testUri = '',
                 testRequestBody = '',
                 testMethodType = '',
-                testUsersNumber = 1,
-                assertionMeanResponseTime = 0,
-                assertionFailedRequestsPercent = 0,
+                testUsersNumber = 0,
+                testRampUpDuration = 0,
+                testUsersAtOnce = 0,
+                testUserRampUpPerSecondMin = 0,
+                testUserRampUpPerSecondMax = 0,
+                testUserRampUpPerSecondDuration = 0,
+                testConstantUsers = 0,
+                testConstantUsersDuration = 0,
+                testNothingFor = 0,
+                assertionMeanResponseTime = -1,
+                assertionFailedRequestsPercent = -1,
               }
   ) {
+    this.simulationStrategy = simulationStrategy;
     this.testBaseUrl = testBaseUrl;
     this.testScenarioName = testScenarioName;
     this.testRequestName = testRequestName;
@@ -28,6 +47,14 @@ export class GatlingRequest {
     this.testRequestBody = testRequestBody;
     this.testMethodType = testMethodType;
     this.testUsersNumber = testUsersNumber;
+    this.testRampUpDuration = testRampUpDuration;
+    this.testUsersAtOnce = testUsersAtOnce;
+    this.testUserRampUpPerSecondMin = testUserRampUpPerSecondMin;
+    this.testUserRampUpPerSecondMax = testUserRampUpPerSecondMax;
+    this.testUserRampUpPerSecondDuration = testUserRampUpPerSecondDuration;
+    this.testConstantUsers = testConstantUsers;
+    this.testConstantUsersDuration = testConstantUsersDuration;
+    this.testNothingFor = testNothingFor;
     this.assertionMeanResponseTime = assertionMeanResponseTime;
     this.assertionFailedRequestsPercent = assertionFailedRequestsPercent;
   }

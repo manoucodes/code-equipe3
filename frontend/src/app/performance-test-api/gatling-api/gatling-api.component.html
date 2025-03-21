@@ -56,6 +56,14 @@
           <h1>Requête de test</h1>
         </div>
 
+        <div class="form-group scenario-selector">
+          <label for="scenarioSelect"><strong>Stratégie de test</strong></label>
+          <select class="form-control" id="scenarioSelect"  name="scenarioSelect" [(ngModel)]="selectedStrategy" (change)="onStrategySelect()">
+            <option *ngFor="let strategy of strategies" [value]="strategy">
+              {{ strategy }}
+          </select>
+        </div>
+
         <div class="row">
           <div class="form-group col">
             <label for="scenarioName"><b>Nom de scénario <span class="required-star">*</span></b></label>
@@ -94,9 +102,6 @@
             <input type="text" class="form-control" id="params" [(ngModel)]="request.testUri" name="testUri"
                    placeholder="/params?param=exemple&page=1">
           </div>
-        </div>
-
-        <div class="row">
           <div class="form-group col">
             <label for="typeRequete"><b>Type de requête <span class="required-star">*</span></b></label>
             <span mat-icon-button
@@ -112,15 +117,6 @@
               <option>PATCH</option>
             </select>
           </div>
-          <div class="form-group col">
-            <label for="nbrUsers"><b>Nombre d'utilisateurs <span class="required-star">*</span></b></label>
-            <span mat-icon-button
-                  matTooltip="Le nombre d'utilisateurs simultanés, pour simuler des charges réalistes et évaluer les performances de l'application sous différents niveaux de trafic.">
-              <mat-icon>info</mat-icon>
-            </span>
-            <input type="number" class="form-control" id="nbrUsers" [(ngModel)]="request.testUsersNumber"
-                   name="userNumber">
-          </div>
         </div>
 
         <div class="form-group">
@@ -130,6 +126,90 @@
           </span>
           <textarea class="form-control" id="requestBody" [(ngModel)]="request.testRequestBody" name="requestBody"
                     rows="5"></textarea>
+        </div>
+
+        <div *ngIf="[strategiesEnum.DEFAULT.valueOf(), strategiesEnum.LOAD_TEST.valueOf()].includes(request.simulationStrategy)" class="row">
+          <div class="form-group col">
+            <label for="testUsersNumber"><b>Nombre d'utilisateurs (sur durée de montée)<span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs par seconde dans une duree de montée.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="number" class="form-control" id="testUsersNumber" [(ngModel)]="request.testUsersNumber"
+                   name="testUsersNumber">
+          </div>
+          <div class="form-group col">
+            <label for="testRampUpDuration"><b>Durée de montée (en Seconde)<span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs dans une duree de montée.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="number" class="form-control" id="testRampUpDuration" [(ngModel)]="request.testRampUpDuration"
+                   name="testRampUpDuration">
+          </div>
+        </div>
+
+        <div *ngIf="[strategiesEnum.STRESS_TEST.valueOf()].includes(request.simulationStrategy)" class="row">
+          <div class="form-group col">
+            <label for="testUserRampUpPerSecondMin"><b>Nombre d'utilisateurs au départ <span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs au début de la montée.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="number" class="form-control" id="testUserRampUpPerSecondMin" [(ngModel)]="request.testUserRampUpPerSecondMin"
+                   name="testUserRampUpPerSecondMin">
+          </div>
+          <div class="form-group col">
+            <label for="testUserRampUpPerSecondMax"><b>Nombre d'utilisateurs à la fin <span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs à la fin de la montée.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="number" class="form-control" id="testUserRampUpPerSecondMax" [(ngModel)]="request.testUserRampUpPerSecondMax"
+                   name="testUserRampUpPerSecondMax">
+          </div>
+          <div class="form-group col">
+            <label for="testUserRampUpPerSecondDuration"><b>Durée de la montée (en Seconde) <span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs à la fin de la montée.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="number" class="form-control" id="testUserRampUpPerSecondDuration" [(ngModel)]="request.testUserRampUpPerSecondDuration"
+                   name="testUserRampUpPerSecondDuration">
+          </div>
+        </div>
+
+        <div *ngIf="[strategiesEnum.SPIKE_TEST.valueOf()].includes(request.simulationStrategy)" class="row">
+          <div class="form-group col">
+            <label for="testConstantUsers"><b>Nombre d'utilisateurs constants par seconde <span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs constant par seconde sur la durée spécifiée.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="number" class="form-control" id="testConstantUsers" [(ngModel)]="request.testConstantUsers"
+                   name="testConstantUsers">
+          </div>
+          <div class="form-group col">
+            <label for="testConstantUsersDuration"><b>Durée (en Seconde) <span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs à la fin de la montée.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="number" class="form-control" id="testConstantUsersDuration" [(ngModel)]="request.testConstantUsersDuration"
+                   name="testConstantUsersDuration">
+          </div>
+        </div>
+
+        <div *ngIf="[strategiesEnum.SPIKE_TEST.valueOf(), strategiesEnum.SMOKE_TEST.valueOf()].includes(request.simulationStrategy)" class="row">
+          <div class="form-group col">
+            <label for="testUsersAtOnce"><b>Nombre d'utilisateurs simultanés <span class="required-star">*</span></b></label>
+            <span mat-icon-button
+                  matTooltip="Le nombre d'utilisateurs simultanés.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="number" class="form-control" id="testUsersAtOnce" [(ngModel)]="request.testUsersAtOnce"
+                   name="testUsersAtOnce">
+          </div>
         </div>
 
         <div class="form-subtitle" style="margin-top: 50px">
