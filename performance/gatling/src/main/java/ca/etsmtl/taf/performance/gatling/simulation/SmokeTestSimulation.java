@@ -1,16 +1,7 @@
 package ca.etsmtl.taf.performance.gatling.simulation;
 
-import static io.gatling.javaapi.core.CoreDsl.StringBody;
-import static io.gatling.javaapi.core.CoreDsl.exec;
-import static io.gatling.javaapi.core.CoreDsl.global;
-import static io.gatling.javaapi.core.CoreDsl.rampUsers;
-import static io.gatling.javaapi.core.CoreDsl.scenario;
-import static io.gatling.javaapi.http.HttpDsl.http;
-import static io.gatling.javaapi.http.HttpDsl.status;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.core.Assertion;
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
@@ -18,11 +9,14 @@ import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoadTestSimulation extends Simulation {
+import static io.gatling.javaapi.core.CoreDsl.*;
+import static io.gatling.javaapi.http.HttpDsl.http;
+import static io.gatling.javaapi.http.HttpDsl.status;
+
+public class SmokeTestSimulation extends Simulation {
 
     private String requestJson = System.getProperty("requestJson");
 
@@ -88,7 +82,7 @@ public class LoadTestSimulation extends Simulation {
         }
 
         setUp(
-                scn.injectOpen(rampUsers(gatlingTestRequest.getUsersNumber()).during(Duration.ofSeconds(gatlingTestRequest.getRampUpDuration())))
+                scn.injectOpen(atOnceUsers(gatlingTestRequest.getUsersAtOnce()))
         ).protocols(httpProtocol)
                 .assertions(assertions.toArray(new Assertion[0]));
     }

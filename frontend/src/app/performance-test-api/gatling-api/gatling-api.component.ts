@@ -1,10 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
-import { PerformanceTestApiService } from 'src/app/_services/performance-test-api.service';
+import {Component, OnInit} from '@angular/core';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {Subscription} from 'rxjs';
+import {PerformanceTestApiService} from 'src/app/_services/performance-test-api.service';
 import Swal from 'sweetalert2';
-import { GatlingRequest } from './gatling-request';
+import {GatlingRequest} from './gatling-request';
 import {ApiResponse, GatlingAssertionResult, GatlingTestResult} from "../../models/gatlingTestResult";
+import {GATLING_SCENARIOS} from "../../models/gatling-scenarios";
+
+enum SIMULATION_STRATEGY
+{
+  DEFAULT="DEFAULT",
+  SMOKE_TEST="SMOKE_TEST",
+  LOAD_TEST="LOAD_TEST",
+  STRESS_TEST="STRESS_TEST",
+  SPIKE_TEST="SPIKE_TEST",
+}
 
 @Component({
   selector: 'app-gatling-api',
@@ -12,7 +22,6 @@ import {ApiResponse, GatlingAssertionResult, GatlingTestResult} from "../../mode
   styleUrls: ['./gatling-api.component.css']
 })
 export class GatlingApiComponent implements OnInit {
-
   modal: HTMLElement | null = null;
   reportModal: HTMLElement | null = null;
   span: HTMLElement | null = null;
@@ -25,10 +34,15 @@ export class GatlingApiComponent implements OnInit {
 
   request: GatlingRequest = new GatlingRequest({});
 
+  strategies: string[] = Object.keys(SIMULATION_STRATEGY).filter(k => isNaN(Number(k)));
+  strategiesEnum = SIMULATION_STRATEGY;
+  selectedStrategy: string | null = null;
+
   constructor(
     private readonly performanceTestApiService: PerformanceTestApiService,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.modal = document.getElementById("myModal");
@@ -39,11 +53,11 @@ export class GatlingApiComponent implements OnInit {
   validateForm(): boolean {
     let isValid = true;
     const requiredFields = [
-      { element: 'testScenarioName', errorMessage: 'Veuillez entrer une valeur' },
-      { element: 'testBaseUrl', errorMessage: 'Veuillez entrer une valeur' },
-      { element: 'testUri', errorMessage: 'Veuillez entrer une valeur' },
-      { element: 'testMethodType', errorMessage: 'Veuillez sélectionner un type de requête' },
-      { element: 'userNumber', errorMessage: 'Veuillez entrer ou sélectionner une valeur' }
+      {element: 'testScenarioName', errorMessage: 'Veuillez entrer une valeur'},
+      {element: 'testBaseUrl', errorMessage: 'Veuillez entrer une valeur'},
+      {element: 'testUri', errorMessage: 'Veuillez entrer une valeur'},
+      {element: 'testMethodType', errorMessage: 'Veuillez sélectionner un type de requête'},
+      {element: 'userNumber', errorMessage: 'Veuillez entrer ou sélectionner une valeur'}
     ];
 
     requiredFields.forEach(field => {
@@ -149,9 +163,17 @@ export class GatlingApiComponent implements OnInit {
     this.closeModal();
   }
 
-  isSuccessfull() : boolean {
+  isSuccessfull(): boolean {
     const failures = this.testResult.assertions.filter((assertion: GatlingAssertionResult) => assertion.result == false);
     console.log("Failures" + failures)
     return failures.length == 0;
+  }
+
+  onStrategySelect() {
+    if(this.selectedStrategy == null)
+      this.selectedStrategy = SIMULATION_STRATEGY.DEFAULT.valueOf()
+
+    if(this.strategies.includes(this.selectedStrategy))
+      this.request = GATLING_SCENARIOS.filter(scenario => scenario.name == this.selectedStrategy).map(it => it.config)[0]
   }
 }
