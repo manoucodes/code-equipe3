@@ -232,6 +232,7 @@ export class GatlingApiComponent implements OnInit {
     }
 
     const newRequest = new GatlingRequest({
+      protocol: "HTTP",
       simulationStrategy: this.selectedStrategy ?? 'DEFAULT',
       testScenarioName: this.request.testScenarioName,
       testRequestName: this.request.testRequestName,
@@ -268,6 +269,7 @@ export class GatlingApiComponent implements OnInit {
 
   persistWsTest(): void {
     const newRequest = new GatlingWsRequest({
+      protocol: "HTTP",
       testBaseUrl: this.wsRequest.testBaseUrl,
       testCriteria: this.wsRequest.testCriteria,
       testUsersNumber: this.wsRequest.testCriteria == "concurrentConnections" ? this.wsRequest.testUsersNumber : 1,

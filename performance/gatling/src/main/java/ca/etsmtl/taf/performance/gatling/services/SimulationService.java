@@ -3,7 +3,7 @@ package ca.etsmtl.taf.performance.gatling.services;
 import ca.etsmtl.taf.performance.gatling.config.GatlingConfigurator;
 import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequest;
 import ca.etsmtl.taf.performance.gatling.simulation.LoadTestSimulation;
-import ca.etsmtl.taf.performance.gatling.simulation.SimulationFactory;
+import ca.etsmtl.taf.performance.gatling.factories.SimulationFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.app.Gatling;
 import io.gatling.core.config.GatlingPropertiesBuilder;

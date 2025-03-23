@@ -1,4 +1,5 @@
 export class GatlingRequest {
+  protocol: string;
   simulationStrategy: string;
   testBaseUrl: string;
   testScenarioName: string;
@@ -20,6 +21,7 @@ export class GatlingRequest {
   assertionsResponseTimePerPercentile: ResponseTimePerPercentile[];
 
   constructor({
+                protocol = '',
                 simulationStrategy = 'DEFAULT',
                 testBaseUrl = '',
                 testScenarioName = '',
@@ -40,6 +42,7 @@ export class GatlingRequest {
                 assertionFailedRequestsPercent = -1,
                 assertionsResponseTimePerPercentile = [],
               }: {
+                protocol?: string;
                 simulationStrategy?: string;
                 testBaseUrl?: string;
                 testScenarioName?: string;
@@ -61,6 +64,7 @@ export class GatlingRequest {
                 assertionsResponseTimePerPercentile?: ResponseTimePerPercentile[];
               }
   ) {
+    this.protocol = protocol;
     this.simulationStrategy = simulationStrategy;
     this.testBaseUrl = testBaseUrl;
     this.testScenarioName = testScenarioName;

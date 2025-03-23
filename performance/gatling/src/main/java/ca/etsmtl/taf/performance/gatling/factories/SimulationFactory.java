@@ -1,6 +1,6 @@
-package ca.etsmtl.taf.performance.gatling.simulation;
+package ca.etsmtl.taf.performance.gatling.factories;
 
-
+import ca.etsmtl.taf.performance.gatling.simulation.*;
 import io.gatling.core.scenario.Simulation;
 
 public class SimulationFactory {

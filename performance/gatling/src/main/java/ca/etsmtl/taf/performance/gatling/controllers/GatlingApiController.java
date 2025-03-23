@@ -31,7 +31,6 @@ public class GatlingApiController {
     public ResponseEntity<MessageResponse> runSimulation(@RequestBody GatlingTestRequest gatlingRequest) {
         MessageResponse response = gatlingFacade.runSimulation(gatlingRequest);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
     @GetMapping("/latest-report")
