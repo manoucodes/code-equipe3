@@ -34,7 +34,7 @@ export class GatlingApiComponent implements OnInit {
   percentiles: number[] = [50, 75, 90, 95, 99, 99.9];
   newPercentile: number = 0;
   newResponseTime: number = 0;
-
+  
   testLog: string = "";
   latestReportContent: SafeHtml | null = null; // Contenu du dernier rapport de test
 
@@ -42,14 +42,22 @@ export class GatlingApiComponent implements OnInit {
 
   request: GatlingRequest = new GatlingRequest({});
 
-  wsRequest: GatlingWsRequest = new GatlingWsRequest({});
-
+  
   strategies: string[] = Object.keys(SIMULATION_STRATEGY).filter(k => isNaN(Number(k)));
   strategiesEnum = SIMULATION_STRATEGY;
   selectedStrategy: string | null = null;
 
   isFirstOption: boolean = true;
   isSecondOption: boolean = false;
+  isThirdOption: boolean = false;
+  get connections(): Number {
+    return this.request.testUsersAtOnce;
+  }
+
+  set connections(value: Number) {
+    this.request.testUsersAtOnce = value;
+    this.request.testUsersNumber = value;
+  }
   
   constructor(
     private readonly performanceTestApiService: PerformanceTestApiService,
@@ -100,7 +108,9 @@ export class GatlingApiComponent implements OnInit {
       return;
     }
 
-    this.busy = this.performanceTestApiService.sendGatlingRequest(this.request)
+    console.log(this.request);
+
+    this.busy = this.performanceTestApiService.sendGatlingRequest({...this.request, protocol: this.isFirstOption ? "HTTP" : "WebSocket"})
       .subscribe((response: any) => {
         this.modal!.style.display = "block";
 
@@ -137,8 +147,6 @@ export class GatlingApiComponent implements OnInit {
       });
   }
 
-  onSubmitWebSocket() {}
-
   //  Afficher le dernier rapport
   showLatestReport() {
     const reportWindow = window.open(this.performanceTestApiService.getLatestReportUrl().toString(), '_blank');
@@ -153,13 +161,19 @@ export class GatlingApiComponent implements OnInit {
     }
   }
 
-  onCheckboxChange(selected: 'first' | 'second') {
+  onCheckboxChange(selected: 'first' | 'second' | 'third') {
     if (selected === 'first') {
       this.isFirstOption = true;
       this.isSecondOption = false;
-    } else {
+      this.isThirdOption = false;
+    } else if (selected === 'second') {
       this.isFirstOption = false;
       this.isSecondOption = true;
+      this.isThirdOption = false;
+    } else if (selected === 'third') {
+      this.isFirstOption = false;
+      this.isSecondOption = false;
+      this.isThirdOption = true;
     }
   }
 
@@ -203,12 +217,9 @@ export class GatlingApiComponent implements OnInit {
   }
 
   addPercentile(): void {
-    console.log("HERE")
-    console.log(`newPercentile: ${this.newPercentile} and newResponseTime: ${this.newResponseTime}` )
-
+    
     if (this.newPercentile && this.newResponseTime) {
 
-      console.log("HERE222")
       const newAssertion = new ResponseTimePerPercentile(Number(this.newPercentile), this.newResponseTime);
       console.log("assertion:" + newAssertion.percentile + "% - " + newAssertion.responseTime + "ms")
       this.request.assertionsResponseTimePerPercentile.push(newAssertion);
@@ -218,9 +229,13 @@ export class GatlingApiComponent implements OnInit {
     }
   }
 
+  
+
   removePercentile(index: number): void {
     this.request.assertionsResponseTimePerPercentile.splice(index, 1);
   }
+
+  
 
   persistTest(): void {
     const percentileAssertions = [...this.request.assertionsResponseTimePerPercentile];
@@ -268,12 +283,10 @@ export class GatlingApiComponent implements OnInit {
   }
 
   persistWsTest(): void {
-    const newRequest = new GatlingWsRequest({
+    /* const newRequest = new GatlingWsRequest({
       protocol: "HTTP",
-      testBaseUrl: this.wsRequest.testBaseUrl,
-      testCriteria: this.wsRequest.testCriteria,
-      testUsersNumber: this.wsRequest.testCriteria == "concurrentConnections" ? this.wsRequest.testUsersNumber : 1,
-      threshold: this.wsRequest.threshold
+      testBaseUrl: this.request.testBaseUrl,
+      testUsersNumber: this.request.testUsersNumber,
     })
     this.busy = this.performanceTestApiService.sendGatlingWsPersistanceRequest(newRequest)
       .subscribe((response: any) => {
@@ -285,7 +298,7 @@ export class GatlingApiComponent implements OnInit {
           title: 'Erreur',
           text: "Le test a échoué, révisez votre configuration de test",
         })
-      });
+      }); */
   }
 }
 

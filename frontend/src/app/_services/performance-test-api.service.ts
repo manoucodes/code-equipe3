@@ -24,8 +24,9 @@ const httpOptions = {
 export class PerformanceTestApiService {
   constructor(private http: HttpClient) { }
 
-  sendGatlingRequest(request: GatlingRequest): Observable<any> {
+  sendGatlingRequest(request: GatlingRequest | GatlingWsRequest): Observable<any> {
     const url = `${GATLING_API}`;
+    console.log(request)
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });

@@ -6,6 +6,9 @@ import static io.gatling.javaapi.http.HttpDsl.http;
 import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequest;
 import static io.gatling.javaapi.http.HttpDsl.status;
 import static io.gatling.javaapi.core.CoreDsl.*;
+import io.gatling.javaapi.core.*;
+import io.gatling.javaapi.http.*;
+import static io.gatling.javaapi.http.HttpDsl.*;
 
 public class ProtocolRequestFactory {
     
@@ -13,6 +16,8 @@ public class ProtocolRequestFactory {
         switch (gatlingTestRequest.getProtocol()) {
             case "HTTP":
                 return createHttpRequest(gatlingTestRequest);
+            case "WebSocket":
+                return createWsRequest(gatlingTestRequest);
             default:
                 throw new IllegalArgumentException("Invalid protocol: " + gatlingTestRequest.getProtocol());
         }
@@ -49,5 +54,21 @@ public class ProtocolRequestFactory {
                 .check(status().not(404), status().not(500)));
     }
 
-    //private static ChainBuilder createWsRequest() {}
+    private static ChainBuilder createWsRequest(GatlingTestRequest gatlingTestRequest) {
+        return exec(
+            ws("Connect WebSocket")
+                .connect(gatlingTestRequest.getBaseUrl())
+                .onConnected(
+                    exec(
+                        ws("Send message")
+                            .sendText("The body of the message")
+                    )
+                )
+        )
+        .pause(1)
+        .exec(
+            ws("Close WebSocket").close()
+        );
+    }
+
 }

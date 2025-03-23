@@ -12,6 +12,10 @@
     <input type="checkbox" [(ngModel)]="isSecondOption" (change)="onCheckboxChange('second')">
     WebSocket
   </label>
+  <label [class.active]="isThirdOption">
+    <input type="checkbox" [(ngModel)]="isThirdOption" (change)="onCheckboxChange('third')">
+    MQTT
+  </label>
 </div>
 
 <div class="container">
@@ -312,20 +316,43 @@
         </div>
         <div [ngBusy]="busy"></div>
       </form>
+      
       <!-- Formulaire WebSocket -->
       <div *ngIf="isSecondOption" class="alternative-form">
-
-        <form (ngSubmit)="onSubmitWebSocket()">
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group dropdown-wrapper">
+            <label for="strategySelect"><strong>Stratégie de test</strong></label>
+            <select class="form-control" id="strategySelect"  name="strategySelect" [(ngModel)]="selectedStrategy" (change)="onStrategySelect()">
+              <option *ngFor="let strategy of strategies" [value]="strategy">
+                {{ strategy }}
+            </select>
+          </div>
           <div class="row">
             <div class="form-group col">
-              <label for="wsBaseUrl"><b>Url de base (WebSocket) <span class="required-star">*</span></b></label>
-              <span mat-icon-button
-                matTooltip="URL WebSocket de l'application à tester, comme wss://exemple.websocket.domain">
+              <label for="scenarioName"><b>Nom de scénario <span class="required-star">*</span></b></label>
+              <span mat-icon-button matTooltip="Nom unique pour identifier le scénario de test.">
                 <mat-icon>info</mat-icon>
               </span>
-              <input type="text" class="form-control" id="wsBaseUrl" [(ngModel)]="wsRequest.testBaseUrl"
-                name="wsBaseUrl" placeholder="wss://exemple.websocket.domain">
+              <input type="text" class="form-control" id="scenarioName" [(ngModel)]="request.testScenarioName"
+                    name="testScenarioName" placeholder="Exemple">
             </div>
+            <div class="form-group col">
+              <label for="requestName"><b>Nom de la requête</b></label>
+              <span mat-icon-button matTooltip="Nom unique pour identifier la requête de test.">
+                <mat-icon>info</mat-icon>
+              </span>
+              <input type="text" class="form-control" id="requestName" [(ngModel)]="request.testRequestName"
+                    name="testRequestName" placeholder="Exemple">
+            </div>
+          </div>
+
+          <div class="form-group col">
+            <label for="baseUrl"><b>Url de base (WebSocket) <span class="required-star">*</span></b></label>
+            <span mat-icon-button matTooltip="URL WebSocket de l'application à tester, comme wss://exemple.websocket.domain">
+              <mat-icon>info</mat-icon>
+            </span>
+            <input type="text" class="form-control" id="baseUrl" [(ngModel)]="request.testBaseUrl"
+                  name="baseUrl" placeholder="wss://exemple.websocket.domain">
           </div>
 
           <div class="row">
@@ -334,44 +361,112 @@
               <span mat-icon-button matTooltip="Choisissez le type de test à effectuer.">
                 <mat-icon>info</mat-icon>
               </span>
-              <select class="form-control" id="testType" [(ngModel)]="wsRequest.testCriteria" name="testCriteria">
-                <option disabled selected value="">-- Choisir un type de test --</option>
-                <option value="connectionTime">connectionTime</option>
-                <option value="concurrentConnections">concurrentConnections</option>
-              </select>
             </div>
           </div>
 
           <div class="row">
-            <div class="form-group col" *ngIf="wsRequest.testCriteria === 'concurrentConnections'">
+            <div class="form-group col">
               <label for="connections"><b>Nombre de connexions concurrentielles <span class="required-star">*</span></b></label>
-              <span mat-icon-button
-                matTooltip="Nombre total de connexions WebSocket simultanées à établir pendant le test.">
+              <span mat-icon-button matTooltip="Nombre total de connexions WebSocket simultanées à établir pendant le test.">
                 <mat-icon>info</mat-icon>
               </span>
-              <input type="number" class="form-control" id="connections"
-                [(ngModel)]="wsRequest.testUsersNumber" name="connections" min="1">
+              <input type="number" class="form-control" id="connections" [(ngModel)]="connections" name="connections" min="1">
             </div>
 
-            <div class="form-group col">
+            <!-- <div class="form-group col">
               <label for="threshold"><b>Seuil (Threshold) <span class="required-star">*</span></b></label>
-              <span mat-icon-button
-                matTooltip="Le seuil de tolérance (en millisecondes, % de latence, etc.) à définir pour les performances acceptables.">
+              <span mat-icon-button matTooltip="Le seuil de tolérance (en millisecondes, % de latence, etc.) à définir pour les performances acceptables.">
                 <mat-icon>info</mat-icon>
               </span>
-              <input type="number" class="form-control" id="threshold" [(ngModel)]="wsRequest.threshold"
-                name="threshold" min="0">
+              <input type="number" class="form-control" id="threshold" [(ngModel)]="request.threshold" name="threshold" min="0">
+            </div> -->
+          </div>
+
+          <div class="form-group">
+            <label for="requestBody"><b>Corps de la requête</b></label>
+            <span mat-icon-button matTooltip="Le corps de la requête WebSocket.">
+              <mat-icon>info</mat-icon>
+            </span>
+            <textarea class="form-control" id="requestBody" [(ngModel)]="request.testRequestBody" name="requestBody" rows="5"></textarea>
+          </div>
+
+          <div class="form-subtitle">
+            <h1>Critères d’acceptation</h1>
+          </div>
+
+          <div class="row">
+            <div class="form-group col">
+              <label for="meanResponseTime"><b>Temps de réponse moyen (ms) <span class="required-star">*</span></b></label>
+              <span mat-icon-button matTooltip="Le temps de réponse moyen (en ms) attendu.">
+                <mat-icon>info</mat-icon>
+              </span>
+              <input type="text" class="form-control" id="meanResponseTime" [(ngModel)]="request.assertionMeanResponseTime"
+                    name="assertionMeanResponseTime" placeholder="50">
+            </div>
+            <div class="form-group col">
+              <label for="failedRequestsPercent"><b>Pourcentage d'échecs (%) <span class="required-star">*</span></b></label>
+              <span mat-icon-button matTooltip="Le pourcentage d'échec maximum toléré.">
+                <mat-icon>info</mat-icon>
+              </span>
+              <input type="text" class="form-control" id="failedRequestsPercent" [(ngModel)]="request.assertionFailedRequestsPercent"
+                    name="assertionFailedRequestsPercent" placeholder="2">
             </div>
           </div>
+
+          <div class="form-subtitle" style="margin-top: 20px">
+            <label><b>Temps de réponse par percentile</b></label>
+          </div>
+
+          <div class="row">
+            <div class="form-group dropdown-wrapper col">
+              <label><b>Percentile (%)</b></label>
+              <select class="form-control" [(ngModel)]="newPercentile" name="newPercentile">
+                <option *ngFor="let p of percentiles" [value]="p">{{ p }}%</option>
+              </select>
+            </div>
+            <div class="form-group col">
+              <label><b>Temps max de réponse (ms)</b></label>
+              <input type="number" class="form-control" [(ngModel)]="newResponseTime" name="newResponseTime">
+            </div>
+            <div class="form-group col" style="display: flex; align-items: flex-end;">
+              <button mat-raised-button color="accent" type="button" (click)="addPercentile()">Ajouter</button>
+            </div>
+          </div>
+
+          <table class="table table-bordered request-assertions-table">
+            <thead>
+              <tr>
+                <th>Percentile (%)</th>
+                <th>Temps de réponse (ms)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of request.assertionsResponseTimePerPercentile; let i = index">
+                <td>
+                  <input type="number" class="form-control" [(ngModel)]="item.percentile" name="percentile_{{ i }}" />
+                </td>
+                <td>
+                  <input type="number" class="form-control" [(ngModel)]="item.responseTime" name="responseTime_{{ i }}" />
+                </td>
+                <td>
+                  <button mat-icon-button color="warn" (click)="removePercentile(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
           <div class="row button-row">
             <div class="col-12 text-center">
               <button mat-raised-button class="test-button" color="primary" type="submit">Tester WebSocket</button>
-              <button mat-raised-button class="test-button" color="primary" (click)="persistWsTest()">Persister</button>
+              <button mat-raised-button class="test-button" color="primary" (click)="persistTest()">Persister</button>
             </div>
           </div>
         </form>
       </div>
+
     </div>
   </div>
 </div>

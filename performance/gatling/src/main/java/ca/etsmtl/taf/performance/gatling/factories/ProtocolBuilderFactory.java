@@ -10,4 +10,9 @@ public class ProtocolBuilderFactory {
             .acceptHeader("application/json")
             .contentTypeHeader("application/json");
     }
+
+    public static HttpProtocolBuilder createWsProtocolBuilder(GatlingTestRequest gatlingTestRequest) {
+        return http.baseUrl(gatlingTestRequest.getBaseUrl())
+        .wsBaseUrl(gatlingTestRequest.getBaseUrl());
+    }
 }

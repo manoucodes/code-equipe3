@@ -40,39 +40,8 @@ public class StressTestSimulation extends Simulation {
         }
     }
 
-    private ChainBuilder createHttpRequest() {
-        String methodType = gatlingTestRequest.getMethodType();
-        HttpRequestActionBuilder httpRequestBuilder;
-
-        switch (methodType.toUpperCase()) {
-            case "GET":
-                httpRequestBuilder =http(gatlingTestRequest.getRequestName())
-                        .get(gatlingTestRequest.getUri());
-                break;
-            case "POST":
-                httpRequestBuilder = http(gatlingTestRequest.getRequestName())
-                        .post(gatlingTestRequest.getUri())
-                        .body(StringBody(gatlingTestRequest.getRequestBody()));
-                break;
-            case "PUT":
-                httpRequestBuilder = http(gatlingTestRequest.getRequestName())
-                        .put(gatlingTestRequest.getUri())
-                        .body(StringBody(gatlingTestRequest.getRequestBody()));
-                break;
-            case "DELETE":
-                httpRequestBuilder = http(gatlingTestRequest.getRequestName())
-                        .delete(gatlingTestRequest.getUri());
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid HttpRequestMethod: " + methodType.toUpperCase());
-        }
-
-        return exec(httpRequestBuilder
-                .check(status().not(404), status().not(500)));
-    }
-
     private ScenarioBuilder scn = scenario(gatlingTestRequest.getScenarioName())
-                .exec(createHttpRequest());
+            .exec(ProtocolRequestFactory.createRequest(gatlingTestRequest));
 
     {
         List<Assertion> assertions = new ArrayList<>();
