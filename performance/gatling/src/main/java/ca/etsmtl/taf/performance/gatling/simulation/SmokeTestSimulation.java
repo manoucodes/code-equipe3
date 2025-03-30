@@ -10,6 +10,11 @@ import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
+
+import ca.etsmtl.taf.performance.gatling.factories.ProtocolRequestFactory;
+import ca.etsmtl.taf.performance.gatling.factories.ProtocolBuilderFactory;
+import ca.etsmtl.taf.performance.gatling.factories.PopulationBuilderFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +74,7 @@ public class SmokeTestSimulation extends Simulation {
     }
 
     private ScenarioBuilder scn = scenario(gatlingTestRequest.getScenarioName())
-                .exec(createHttpRequest());
+            .exec(ProtocolRequestFactory.createRequest(gatlingTestRequest));
 
     {
         List<Assertion> assertions = new ArrayList<>();
@@ -89,8 +94,8 @@ public class SmokeTestSimulation extends Simulation {
         }
 
         setUp(
-                scn.injectOpen(atOnceUsers(gatlingTestRequest.getUsersAtOnce()))
-        ).protocols(httpProtocol)
+                PopulationBuilderFactory.createSmokeTestSimulationPopulationBuilder(scn, gatlingTestRequest).protocols(ProtocolBuilderFactory.createHttpProtocolBuilder(gatlingTestRequest))
+        ).protocols(ProtocolBuilderFactory.createHttpProtocolBuilder(gatlingTestRequest))
                 .assertions(assertions.toArray(new Assertion[0]));
     }
 }

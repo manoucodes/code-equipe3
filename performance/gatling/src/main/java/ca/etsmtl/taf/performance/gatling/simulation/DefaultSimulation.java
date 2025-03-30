@@ -1,5 +1,6 @@
 package ca.etsmtl.taf.performance.gatling.simulation;
 
+import ca.etsmtl.taf.performance.gatling.factories.PopulationBuilderFactory;
 import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequest;
 import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequestPercentileResponseTime;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +10,8 @@ import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
+import ca.etsmtl.taf.performance.gatling.factories.ProtocolRequestFactory;
+import ca.etsmtl.taf.performance.gatling.factories.ProtocolBuilderFactory;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -71,18 +74,18 @@ public class DefaultSimulation extends Simulation {
     }
 
     private ScenarioBuilder scn = scenario(gatlingTestRequest.getScenarioName())
-            .exec(createHttpRequest());
+            .exec(ProtocolRequestFactory.createRequest(gatlingTestRequest));
 
     {
         List<Assertion> assertions = new ArrayList<>();
 
-        if (gatlingTestRequest.getMeanResponseTime() >= 0) {
-            assertions.add(global().responseTime().mean().lt(gatlingTestRequest.getMeanResponseTime()));
-        }
+                if (gatlingTestRequest.getMeanResponseTime() >= 0) {
+                    assertions.add(global().responseTime().mean().lt(gatlingTestRequest.getMeanResponseTime()));
+                }
 
-        if (gatlingTestRequest.getFailedRequestsPercent() >= 0) {
-            assertions.add(global().failedRequests().percent().lt(gatlingTestRequest.getFailedRequestsPercent()));
-        }
+                if (gatlingTestRequest.getFailedRequestsPercent() >= 0) {
+                    assertions.add(global().failedRequests().percent().lt(gatlingTestRequest.getFailedRequestsPercent()));
+                }
 
         if (gatlingTestRequest.getResponseTimePerPercentile().size() > 0) {
             for(GatlingTestRequestPercentileResponseTime assertion : gatlingTestRequest.getResponseTimePerPercentile()){
@@ -93,5 +96,11 @@ public class DefaultSimulation extends Simulation {
         setUp(
                 scn.injectOpen(rampUsers(gatlingTestRequest.getUsersNumber()).during(Duration.ofSeconds(gatlingTestRequest.getRampUpDuration())))).protocols(httpProtocol)
                 .assertions(assertions.toArray(new Assertion[0]));
+                if (gatlingTestRequest.getResponseTimePerPercentile().size() > 0) {
+                    for(GatlingTestRequestPercentileResponseTime assertion : gatlingTestRequest.getResponseTimePerPercentile()){
+                        assertions.add(global().responseTime().percentile(assertion.getPercentile()).lt(assertion.getResponseTime()));
+                    }
+                }
+        setUp(PopulationBuilderFactory.createDefaultSimulationPopulationBuilder(scn, gatlingTestRequest)).protocols(ProtocolBuilderFactory.createHttpProtocolBuilder(gatlingTestRequest)).assertions(assertions.toArray(new Assertion[0]));
     }
 }

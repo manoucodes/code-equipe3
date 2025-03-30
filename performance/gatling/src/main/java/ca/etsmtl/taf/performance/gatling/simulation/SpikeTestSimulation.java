@@ -14,6 +14,11 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import ca.etsmtl.taf.performance.gatling.factories.ProtocolRequestFactory;
+import ca.etsmtl.taf.performance.gatling.factories.ProtocolBuilderFactory;
+import ca.etsmtl.taf.performance.gatling.factories.PopulationBuilderFactory;
+
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static io.gatling.javaapi.http.HttpDsl.status;
@@ -70,7 +75,7 @@ public class SpikeTestSimulation extends Simulation {
     }
 
     private ScenarioBuilder scn = scenario(gatlingTestRequest.getScenarioName())
-                .exec(createHttpRequest());
+            .exec(ProtocolRequestFactory.createRequest(gatlingTestRequest));
 
     {
         List<Assertion> assertions = new ArrayList<>();
@@ -90,13 +95,8 @@ public class SpikeTestSimulation extends Simulation {
         }
 
         setUp(
-                scn.injectOpen(
-                        constantUsersPerSec(gatlingTestRequest.getConstantUsers()).during(Duration.ofSeconds(gatlingTestRequest.getConstantUsersDuration())),
-                        atOnceUsers(gatlingTestRequest.getUsersAtOnce()),
-                        constantUsersPerSec(gatlingTestRequest.getUsersAtOnce()).during(Duration.ofMinutes(3)),
-                        constantUsersPerSec(gatlingTestRequest.getConstantUsers()).during(Duration.ofSeconds(gatlingTestRequest.getConstantUsersDuration()))
-                )
-        ).protocols(httpProtocol)
+                PopulationBuilderFactory.createSpikeTestSimulationPopulationBuilder(scn, gatlingTestRequest)
+        ).protocols(ProtocolBuilderFactory.createHttpProtocolBuilder(gatlingTestRequest))
                 .assertions(assertions.toArray(new Assertion[0]));
     }
 }

@@ -13,6 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class GatlingTestRequest {
+    @JsonAlias("protocol")
+    private String protocol;
     @JsonAlias("simulationStrategy")
     private String simulationStrategy;
     @JsonAlias("testBaseUrl")

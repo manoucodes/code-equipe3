@@ -8,6 +8,11 @@ import static io.gatling.javaapi.core.CoreDsl.scenario;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static io.gatling.javaapi.http.HttpDsl.status;
 
+
+import ca.etsmtl.taf.performance.gatling.factories.ProtocolRequestFactory;
+import ca.etsmtl.taf.performance.gatling.factories.ProtocolBuilderFactory;
+import ca.etsmtl.taf.performance.gatling.factories.PopulationBuilderFactory;
+
 import ca.etsmtl.taf.performance.gatling.model.GatlingTestRequestPercentileResponseTime;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -75,7 +80,7 @@ public class LoadTestSimulation extends Simulation {
     }
 
     private ScenarioBuilder scn = scenario(gatlingTestRequest.getScenarioName())
-                .exec(createHttpRequest());
+            .exec(ProtocolRequestFactory.createRequest(gatlingTestRequest));
 
     {
         List<Assertion> assertions = new ArrayList<>();
@@ -95,8 +100,8 @@ public class LoadTestSimulation extends Simulation {
         }
 
         setUp(
-                scn.injectOpen(rampUsers(gatlingTestRequest.getUsersNumber()).during(Duration.ofSeconds(gatlingTestRequest.getRampUpDuration())))
-        ).protocols(httpProtocol)
+                PopulationBuilderFactory.createLoadTestSimulationPopulationBuilder(scn, gatlingTestRequest)
+        ).protocols(ProtocolBuilderFactory.createHttpProtocolBuilder(gatlingTestRequest))
                 .assertions(assertions.toArray(new Assertion[0]));
     }
 }
